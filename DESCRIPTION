@@ -1,0 +1,11 @@
+Package: mylm
+Type: Package
+Title: Mikal's Personal Linear Model
+Version: 0.1.0
+Author: Mikal Stapnes
+Maintainer: Mikal Stapnes <mstapnes@gmail.com>
+Description: More about what it does (maybe more than one line)
+    Use four spaces when indenting paragraphs within the Description.
+License: What license is it under?
+Encoding: UTF-8
+LazyData: true

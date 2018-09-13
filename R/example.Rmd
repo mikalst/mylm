@@ -7,15 +7,17 @@ output: html_notebook
 ```{r}
 library("gamlss.data")
 library(GGally)
+library(ggplot2)
 
 A = mylm(rent ~ area + yearc, rent99)
 A$significance_lvls
-summary(A)
-
+#summary(A)
+#A$residuals
+plot(A)
 
 #cat("RLM")
-standardlm = lm(rent ~ area + yearc, rent99)
-summary(standardlm)
+#standardlm = lm(rent ~ area + yearc, rent99)
+#summary(standardlm)
 
 
 

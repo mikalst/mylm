@@ -115,7 +115,7 @@ summary.mylm <- function(object, ...){
 
 plot.mylm <- function(object, ...){
   # Code here is used when plot(object) is used on objects of class "mylm"
-  cat("Funny pictures")
+  qplot(object$fitted_values, object$residuals)
 }
 
 

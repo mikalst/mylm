@@ -175,13 +175,38 @@ $(document).ready(function () {
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShcImdhbWxzcy5kYXRhXCIpXG5saWJyYXJ5KEdHYWxseSlcbkEgPSBteWxtKHJlbnQgfiBhcmVhICsgeWVhcmMsIHJlbnQ5OSlcbmBgYCJ9 -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShcImdhbWxzcy5kYXRhXCIpXG5saWJyYXJ5KEdHYWxseSlcbkEgPSBteWxtKHJlbnQgfiBhcmVhICsgeWVhcmMsIHJlbnQ5OSlcbkEkc2lnbmlmaWNhbmNlX2x2bHNcbmBgYCJ9 -->
 <pre class="r"><code>library(&quot;gamlss.data&quot;)
 library(GGally)
-A = mylm(rent ~ area + yearc, rent99)</code></pre>
+A = mylm(rent ~ area + yearc, rent99)
+A$significance_lvls</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiRXJyb3IgaW4gb25lcyhkaW0oWClbMl0gKiAyZS0xNikgOiBjb3VsZCBub3QgZmluZCBmdW5jdGlvbiBcIm9uZXNcIlxuIn0= -->
-<pre><code>Error in ones(dim(X)[2] * 2e-16) : could not find function &quot;ones&quot;</code></pre>
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiKioqXCIgXCIqKipcIiBcIioqKlwiXG4ifQ== -->
+<pre><code>[1] &quot;***&quot; &quot;***&quot; &quot;***&quot;</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc3VtbWFyeShBKVxuYGBgIn0= -->
+<pre class="r"><code>summary(A)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiU3VtbWFyeSBvZiBvYmplY3RcbkNhbGw6IFxubXlsbShmb3JtdWxhID0gcmVudCB+IGFyZWEgKyB5ZWFyYywgZGF0YSA9IHJlbnQ5OSlcblxuUmVzaWR1YWxzOiBcbiAgICAgICAgMCUgICAgICAgIDI1JSAgICAgICAgNTAlICAgICAgICA3NSUgICAgICAgMTAwJSBcbi03MzQuNzYzOTggIC05NC43NTIyOSAgLTEwLjg2Nzg1ICAgODIuNTUxNDEgMTA2My4xNjc2OCBcblxuQ29lZmZpY2llbnRzOiBcbiAgICAgICAgICAgICAgRXN0aW1hdGUgU3RkLiBFcnJvciB6IHZhbHVlIFByKD58enwpICAgIFxuKEludGVyY2VwdCkgLTQ3NzUuNTk0MiAgIDI0NC4zNTQ5ICAtMTkuNTQgICAgMmUtMTYgKioqXG5hcmVhICAgICAgICAgICAgNS4zNjE4ICAgICAwLjExNjUgICA0Ni4wMSAgICAyZS0xNiAqKipcbnllYXJjICAgICAgICAgICAyLjQ5MTMgICAgIDAuMTIzOSAgIDIwLjExICAgIDJlLTE2ICoqKlxuU2lnbmlmLiBjb2RlczogIDAgJyoqKicgMC4wMDEgJyoqJyAwLjAxICcqJyAwLjA1ICcuJyAwLjEgJyAnIDFcblxuUmVzaWR1YWwgU3RhbmRhcmQgRXJyb3I6IDE0OS4zIG9uIFxuIn0= -->
+<pre><code>Summary of object
+Call: 
+mylm(formula = rent ~ area + yearc, data = rent99)
+
+Residuals: 
+        0%        25%        50%        75%       100% 
+-734.76398  -94.75229  -10.86785   82.55141 1063.16768 
+
+Coefficients: 
+              Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept) -4775.5942   244.3549  -19.54    2e-16 ***
+area            5.3618     0.1165   46.01    2e-16 ***
+yearc           2.4913     0.1239   20.11    2e-16 ***
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual Standard Error: 149.3 on </code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiRXJyb3IgaW4gY2F0KGRpbShYKVsxXSAtIGRpbShYKVsyXSkgOiBvYmplY3QgJ1gnIG5vdCBmb3VuZFxuIn0= -->
+<pre><code>Error in cat(dim(X)[1] - dim(X)[2]) : object 'X' not found</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
@@ -190,7 +215,7 @@ A = mylm(rent ~ area + yearc, rent99)</code></pre>
 <p>The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike <em>Knit</em>, <em>Preview</em> does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.</p>
 <!-- rnb-text-end -->
 
-<div id="rmd-source-code">LS0tCnRpdGxlOiAiUiBOb3RlYm9vayIKb3V0cHV0OiBodG1sX25vdGVib29rCi0tLQoKCmBgYHtyfQpsaWJyYXJ5KCJnYW1sc3MuZGF0YSIpCmxpYnJhcnkoR0dhbGx5KQoKQSA9IG15bG0ocmVudCB+IGFyZWEgKyB5ZWFyYywgcmVudDk5KQoKI2NhdCgiTVlMTSIpCiNwcmludChBKQoKI3NxcnQoQSRlc3RpbWF0ZWRfdmFyaWFuY2UpCgojQSRjb3ZfY29lZmYKCiNjYXQoIlJMTSIpCnN0YW5kYXJkbG0gPSBsbShyZW50IH4gYXJlYSArIHllYXJjLCByZW50OTkpCnN1bW1hcnkoc3RhbmRhcmRsbSkKCkEkY292X2NvZWZmCkEkc3RkX2NvZWZmCkEkY29lZmZfegpBJHBfdmFsdWVzCgpgYGAKCkFkZCBhIG5ldyBjaHVuayBieSBjbGlja2luZyB0aGUgKkluc2VydCBDaHVuayogYnV0dG9uIG9uIHRoZSB0b29sYmFyIG9yIGJ5IHByZXNzaW5nICpDbWQrT3B0aW9uK0kqLgoKV2hlbiB5b3Ugc2F2ZSB0aGUgbm90ZWJvb2ssIGFuIEhUTUwgZmlsZSBjb250YWluaW5nIHRoZSBjb2RlIGFuZCBvdXRwdXQgd2lsbCBiZSBzYXZlZCBhbG9uZ3NpZGUgaXQgKGNsaWNrIHRoZSAqUHJldmlldyogYnV0dG9uIG9yIHByZXNzICpDbWQrU2hpZnQrSyogdG8gcHJldmlldyB0aGUgSFRNTCBmaWxlKS4gCgpUaGUgcHJldmlldyBzaG93cyB5b3UgYSByZW5kZXJlZCBIVE1MIGNvcHkgb2YgdGhlIGNvbnRlbnRzIG9mIHRoZSBlZGl0b3IuIENvbnNlcXVlbnRseSwgdW5saWtlICpLbml0KiwgKlByZXZpZXcqIGRvZXMgbm90IHJ1biBhbnkgUiBjb2RlIGNodW5rcy4gSW5zdGVhZCwgdGhlIG91dHB1dCBvZiB0aGUgY2h1bmsgd2hlbiBpdCB3YXMgbGFzdCBydW4gaW4gdGhlIGVkaXRvciBpcyBkaXNwbGF5ZWQuCgo=</div>
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiUiBOb3RlYm9vayIKb3V0cHV0OiBodG1sX25vdGVib29rCi0tLQoKCmBgYHtyfQpsaWJyYXJ5KCJnYW1sc3MuZGF0YSIpCmxpYnJhcnkoR0dhbGx5KQoKQSA9IG15bG0ocmVudCB+IGFyZWEgKyB5ZWFyYywgcmVudDk5KQpBJHNpZ25pZmljYW5jZV9sdmxzCnN1bW1hcnkoQSkKCgojY2F0KCJSTE0iKQpzdGFuZGFyZGxtID0gbG0ocmVudCB+IGFyZWEgKyB5ZWFyYywgcmVudDk5KQpzdW1tYXJ5KHN0YW5kYXJkbG0pCgoKCmBgYAoKQWRkIGEgbmV3IGNodW5rIGJ5IGNsaWNraW5nIHRoZSAqSW5zZXJ0IENodW5rKiBidXR0b24gb24gdGhlIHRvb2xiYXIgb3IgYnkgcHJlc3NpbmcgKkNtZCtPcHRpb24rSSouCgpXaGVuIHlvdSBzYXZlIHRoZSBub3RlYm9vaywgYW4gSFRNTCBmaWxlIGNvbnRhaW5pbmcgdGhlIGNvZGUgYW5kIG91dHB1dCB3aWxsIGJlIHNhdmVkIGFsb25nc2lkZSBpdCAoY2xpY2sgdGhlICpQcmV2aWV3KiBidXR0b24gb3IgcHJlc3MgKkNtZCtTaGlmdCtLKiB0byBwcmV2aWV3IHRoZSBIVE1MIGZpbGUpLiAKClRoZSBwcmV2aWV3IHNob3dzIHlvdSBhIHJlbmRlcmVkIEhUTUwgY29weSBvZiB0aGUgY29udGVudHMgb2YgdGhlIGVkaXRvci4gQ29uc2VxdWVudGx5LCB1bmxpa2UgKktuaXQqLCAqUHJldmlldyogZG9lcyBub3QgcnVuIGFueSBSIGNvZGUgY2h1bmtzLiBJbnN0ZWFkLCB0aGUgb3V0cHV0IG9mIHRoZSBjaHVuayB3aGVuIGl0IHdhcyBsYXN0IHJ1biBpbiB0aGUgZWRpdG9yIGlzIGRpc3BsYXllZC4KCg==</div>
 
 
 

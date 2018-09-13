@@ -21,14 +21,17 @@ mylm <- function(formula, data = list(), contrasts = NULL, ...){
   est$formula <- formula
 
   # Store information used for model fit
-  est$data <- X
+  est$X <- X
 
   #Fit model (using LSQ)
   est$coefficients = solve((t(X) %*% X), t(X) %*% y)
 
-  #Construct fitted values
+  #Construct fitted values and residuals
   est$fitted_values = X%*%est$coefficients
   est$residuals = y - est$fitted_values
+
+  #Construct quantiles
+  est$quantiles = quantile(as.numeric(est$residuals))
 
   #Estimate error
   est$SSE = t(est$residuals) %*% est$residuals
@@ -42,6 +45,24 @@ mylm <- function(formula, data = list(), contrasts = NULL, ...){
   est$std_coeff = sqrt(diag(est$cov_coeff))
   est$coeff_z = est$coefficients/est$std_coeff
   est$p_values = pmax(2*(1-pnorm(abs(est$coeff_z))),rep(2e-16,dim(X)[2]))
+  fsign = function(value){
+    if (value < 0.001) {
+      return ('***')
+    }
+    else if (value < 0.01) {
+      return ('**')
+    }
+    else if (value < 0.05) {
+      return ('*')
+    }
+    else if (value < 0.1) {
+      return ('.')
+    }
+    else {
+      return (' ')
+    }
+  }
+  est$significance_lvls = sapply(est$p_values, fsign)
 
   # Set class name. This is very important!
   class(est) <- 'mylm'
@@ -64,6 +85,32 @@ summary.mylm <- function(object, ...){
   # Code here is used when summary(object) is used on objects of class "mylm"
   # Useful functions include cat, print.default and format
   cat('Summary of object\n')
+  cat('Call: \n')
+  print(object$call)
+  cat('\nResiduals: \n')
+  print(object$quantiles)
+  cat('\nCoefficients: \n')
+
+  outmatrix = data.frame(data= c(object$coefficients, object$std_coeff, object$coeff_z, object$p_values, object$significance_lvls),
+                         nrow = dim(object$X)[2], ncol=5)
+  outmatrix = data.frame(format(object$coefficients, digits=4, nsmall=4),
+                         format(object$std_coeff, digits=4, nsmall=4),
+                         format(object$coeff_z, digits=4, nsmall=2),
+                         format(object$p_values, digits=4, nsmall=2),
+                         object$significance_lvls)
+
+  #rownames(outmatrix) = rownames(A$coefficients)
+
+  colnames(outmatrix) = c('Estimate', 'Std. Error', 'z value', 'Pr(>|z|)', ' ')
+  print(outmatrix, quote = F)
+  cat('Signif. codes:  0 \'***\' 0.001 \'**\' 0.01 \'*\' 0.05 \'.\' 0.1 \' \' 1')
+
+  cat('\n\n')
+  cat('Residual Standard Error: ')
+  cat(format(sqrt(object$estimated_variance), digits=1, nsmall=1))
+  cat(' on '); cat(dim(object$X)[1] - dim(object$X)[2]); cat(' degrees of freedom')
+
+
 }
 
 plot.mylm <- function(object, ...){

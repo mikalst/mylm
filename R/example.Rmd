@@ -10,17 +10,21 @@ library(GGally)
 
 A = mylm(rent ~ area + yearc, rent99)
 
-rent99
-
 #cat("MYLM")
-t(A$coefficients)
+#print(A)
 
+#sqrt(A$estimated_variance)
+
+#A$cov_coeff
 
 #cat("RLM")
 standardlm = lm(rent ~ area + yearc, rent99)
-standardlm$coefficients
-print(standardlm)
+summary(standardlm)
 
+A$cov_coeff
+A$std_coeff
+A$coeff_z
+A$p_values
 
 ```
 

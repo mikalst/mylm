@@ -26,9 +26,22 @@ mylm <- function(formula, data = list(), contrasts = NULL, ...){
   #Fit model (using LSQ)
   est$coefficients = solve((t(X) %*% X), t(X) %*% y)
 
+  #Construct fitted values
+  est$fitted_values = X%*%est$coefficients
+  est$residuals = y - est$fitted_values
+
+  #Estimate error
+  est$SSE = t(est$residuals) %*% est$residuals
+  est$estimated_variance = est$SSE / (dim(X)[1] - dim(X)[2])
+
+  #store covariance matrix of parameter estimates
+  est$cov_coeff = solve(t(X)%*%X) * as.numeric(est$estimated_variance)
+
 
   #Compute test statistics
-
+  est$std_coeff = sqrt(diag(est$cov_coeff))
+  est$coeff_z = est$coefficients/est$std_coeff
+  est$p_values = pmax(2*(1-pnorm(abs(est$coeff_z))),rep(2e-16,dim(X)[2]))
 
   # Set class name. This is very important!
   class(est) <- 'mylm'
@@ -40,10 +53,11 @@ mylm <- function(formula, data = list(), contrasts = NULL, ...){
 print.mylm <- function(object, ...){
   # Code here is used when print(object) is used on objects of class "mylm"
   # Useful functions include cat, print.default and format
-  cat('Info about object\n')
-  cat('Call: \n' + call)
-  cat('Coefficients'
-
+  cat('Call: \n')
+  print(object$call)
+  cat('\n')
+  cat('Coefficients: \n')
+  t(object$coefficients)
 }
 
 summary.mylm <- function(object, ...){

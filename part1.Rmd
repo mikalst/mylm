@@ -1,0 +1,28 @@
+---
+title: "Part 1: Explanatory analysis of the dataset"
+output: html_notebook
+---
+
+```{r, eval=T, echo=FALSE}
+#install.packages("car")
+library(car)
+library(GGally)
+data(SLID, package = "carData")
+SLID = SLID[complete.cases(SLID), ]
+ggpairs(SLID)
+```
+
+Draw a matrix of diagnostic plots of all the variables and comment briefly on the relationship between some of the variables. 
+
+Wage has a positive correlation with the numerical variables education and age as well as the qualitative variable sex. 
+
+
+We want to study how the qualitative variable wages depends on one or more explanatory variables. Which
+assumptions do we need make about the data if we want to perform a multiple linear regression analysis?
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Cmd+Shift+K* to preview the HTML file). 
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+

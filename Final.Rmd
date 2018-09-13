@@ -1,0 +1,16 @@
+--- 
+pdf_document:
+  toc: no
+  toc_depth: 2
+output: pdf_document
+date: "`r format(Sys.time(), '%d.%m.%Y')`"
+subtitle: 'Group XXXX: Mikal S. Stapnes, Henrik S. Lie'
+title: 'TMA4315: Compulsory exercise 1'
+---
+
+```{r setup, include = FALSE}
+library(formatR)
+showsol <- FALSE
+library(knitr)
+opts_chunk$set(tidy.opts = list(width.cutoff = 68), tidy = TRUE, warning = FALSE, error = FALSE, message = FALSE, echo = TRUE)
+```

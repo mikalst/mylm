@@ -24,7 +24,7 @@ mylm <- function(formula, data = list(), contrasts = NULL, ...){
   est$data <- X
 
   #Fit model (using LSQ)
-  est$beta = solve((t(X) %*% X), t(X) %*% y)
+  est$coefficients = solve((t(X) %*% X), t(X) %*% y)
 
 
   #Compute test statistics
@@ -41,6 +41,9 @@ print.mylm <- function(object, ...){
   # Code here is used when print(object) is used on objects of class "mylm"
   # Useful functions include cat, print.default and format
   cat('Info about object\n')
+  cat('Call: \n' + call)
+  cat('Coefficients'
+
 }
 
 summary.mylm <- function(object, ...){

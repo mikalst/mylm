@@ -14,11 +14,20 @@ ggpairs(SLID)
 
 Draw a matrix of diagnostic plots of all the variables and comment briefly on the relationship between some of the variables. 
 
-Wage has a positive correlation with the numerical variables education and age as well as the qualitative variable sex. 
+`Wage` has a positive correlation with the quantitative variables `education` and `age`. In addition we see that `sex`="Male" has a positive effect on `Wage`. Increasing `education`, `age` or switching `sex` to "Male" will, on average, result in an increase in `Wage` in our dataset. 
 
 
 We want to study how the qualitative variable wages depends on one or more explanatory variables. Which
 assumptions do we need make about the data if we want to perform a multiple linear regression analysis?
+
+If we want to perform a MLR analysis, several assumptions need to be made. We assume a linear relationship between the response `Wage` and the covariates
+
+$$ y_i = \beta_0 + \beta_1 x_{i1} + ... + \beta_k x_{ik} + \epsilon_i $$
+Also, the errors $\epsilon_i$ are assumed to be independent, identically distributed with mean $0$ and constant variance $\sigma^2$. If we wish to construct confidence intervals and compute test statistics we must also assume normality in the errors $\epsilon_i \sim N(0, \sigma^2)$
+SPØR METTE OM ANTAGELSENE KOMMER I RIKTIG REKKEFØLGE HER
+
+
+
 
 Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
 

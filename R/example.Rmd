@@ -8,14 +8,18 @@ output: html_notebook
 library("gamlss.data")
 library(GGally)
 
+A = mylm(rent ~ area + yearc, rent99)
+
 rent99
 
-A = mylm(rent ~ area + yearc, rent99)
-plot(A)
-A$beta
+#cat("MYLM")
+t(A$coefficients)
 
+
+#cat("RLM")
 standardlm = lm(rent ~ area + yearc, rent99)
 standardlm$coefficients
+print(standardlm)
 
 
 ```

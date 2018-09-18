@@ -8,16 +8,28 @@ output: html_notebook
 library("gamlss.data")
 library(GGally)
 library(ggplot2)
+library(mylm)
 
 A = mylm(rent ~ area + yearc, rent99)
-A$significance_lvls
-#summary(A)
+
+A$F_statistic
+A$F_p_val
+
+
+A$SSE
+A$SST
+A$SSR
+
+print(mean(A$y))
+
+ 
+summary(A)
 #A$residuals
 plot(A)
 
 #cat("RLM")
-#standardlm = lm(rent ~ area + yearc, rent99)
-#summary(standardlm)
+standardlm = lm(rent ~ area + yearc, rent99)
+summary(standardlm)
 
 
 

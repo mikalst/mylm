@@ -22,6 +22,7 @@ mylm <- function(formula, data = list(), contrasts = NULL, ...){
 
   # Store information used for model fit
   est$X <- X
+  est$y = y
 
   #Fit model (using LSQ)
   est$coefficients = solve((t(X) %*% X), t(X) %*% y)
@@ -33,15 +34,18 @@ mylm <- function(formula, data = list(), contrasts = NULL, ...){
   #Construct quantiles
   est$quantiles = quantile(as.numeric(est$residuals))
 
-  #Estimate error
+  #Compute sums of squares
+  est$SST = t(est$y - mean(est$y)) %*% (est$y - mean(est$y))
+  est$SSR = t(est$fitted_values - mean(est$y)) %*% (est$fitted_values - mean(est$y))
   est$SSE = t(est$residuals) %*% est$residuals
+
+  #Estimate error
   est$estimated_variance = est$SSE / (dim(X)[1] - dim(X)[2])
 
   #store covariance matrix of parameter estimates
   est$cov_coeff = solve(t(X)%*%X) * as.numeric(est$estimated_variance)
 
-
-  #Compute test statistics
+  #Compute T-test statistics
   est$std_coeff = sqrt(diag(est$cov_coeff))
   est$coeff_z = est$coefficients/est$std_coeff
   est$p_values = pmax(2*(1-pnorm(abs(est$coeff_z))),rep(2e-16,dim(X)[2]))
@@ -63,6 +67,10 @@ mylm <- function(formula, data = list(), contrasts = NULL, ...){
     }
   }
   est$significance_lvls = sapply(est$p_values, fsign)
+
+  #Compute X^2 test statistics
+  est$F_statistic = (est$SSR / (dim(X)[2] - 1)) / (est$estimated_variance)
+  est$F_p_val = max((1-pchisq(est$F_statistic*(dim(X)[2] - 1), dim(X)[2] - 1)), 2E-16)
 
   # Set class name. This is very important!
   class(est) <- 'mylm'
@@ -109,6 +117,21 @@ summary.mylm <- function(object, ...){
   cat('Residual Standard Error: ')
   cat(format(sqrt(object$estimated_variance), digits=1, nsmall=1))
   cat(' on '); cat(dim(object$X)[1] - dim(object$X)[2]); cat(' degrees of freedom')
+
+  cat('\n')
+  cat('Multiple R-squared: ')
+  cat(format(object$SSR / object$SST, digits = 4, nsmall= 4))
+  cat('    Adjusted R-squared: ')
+  cat(format((1 - (object$SSE / (dim(object$X)[1] - dim(object$X)[2]))/
+                    (object$SST / (dim(object$X)[1] - 1))), digits = 5))
+
+  cat('\n')
+  cat('Chisq-statisic: ')
+  cat(format(object$F_statistic, digits=1, nsmall = 0))
+  cat(' on '); cat(dim(object$X)[2] - 1); cat(' degrees of freedom')
+  cat(', p-value: '); cat(object$F_p_val)
+
+  cat('\n')
 
 
 }

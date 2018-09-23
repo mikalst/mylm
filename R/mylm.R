@@ -44,9 +44,10 @@ mylm <- function(formula, data = list(), contrasts = NULL, ...){
 
   #store covariance matrix of parameter estimates
   est$cov_coeff = solve(t(X)%*%X) * as.numeric(est$estimated_variance)
+  est$std_coeff = sqrt(diag(est$cov_coeff))
+  est$corr_coeff = est$cov_coeff / (est$std_coeff %*% t(est$std_coeff))
 
   #Compute T-test statistics
-  est$std_coeff = sqrt(diag(est$cov_coeff))
   est$coeff_z = est$coefficients/est$std_coeff
   est$p_values = pmax(2*(1-pnorm(abs(est$coeff_z))),rep(2e-16,dim(X)[2]))
   fsign = function(value){

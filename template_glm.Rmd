@@ -20,27 +20,26 @@ library(knitr)
 opts_chunk$set(tidy.opts = list(width.cutoff = 68), tidy = TRUE, warning = FALSE, error = FALSE, message = FALSE, echo = TRUE)
 ```
 
-# Part 1
+To get a pdf file, make comments of the lines with the "html_document" information, and make the lines with the "pdf_document" information regular, and vice versa.
+
+
+# Part 1 (Explanatory analysis of the dataset)
 
 **Bold**
 
 _italic_
 
-To get a pdf file, make comments of the lines with the "html_document" information, and make the lines with the "pdf_document" information regular, and vice versa.
 
 ## a)
 
-Your answer for part 1a)
-
-```{r}
-# some R code for part 1a)
-library(ggplot2)
-ggplot(data.frame(x = 1:10, Group = rep(c("A", "B"), 5)), aes(x = x, y = x, col = Group)) + geom_point() + theme_bw()
-```
+Task: 
+* Draw a matrix of diagnostic plots of all the variables and comment briefly on the relationship between some of the variables. 
+* Which assumptions do we need make about the data if we want to perform a multiple linear regression analysis?
 
 
+Answer:
 ```{r, eval=T, echo=FALSE}
-#install.packages("car")
+installed.packages("car")
 library(car)
 library(GGally)
 data(SLID, package = "carData")
@@ -48,24 +47,27 @@ SLID = SLID[complete.cases(SLID), ]
 ggpairs(SLID)
 ```
 
-Draw a matrix of diagnostic plots of all the variables and comment briefly on the relationship between some of the variables. 
-
 `Wage` has a positive correlation with the quantitative variables `education` and `age`. In addition we see that `sex`="Male" has a positive effect on `Wage`. Increasing `education`, `age` or switching `sex` to "Male" will, on average, result in an increase in `Wage` in our dataset. 
-
-
-We want to study how the qualitative variable wages depends on one or more explanatory variables. Which
-assumptions do we need make about the data if we want to perform a multiple linear regression analysis?
 
 If we want to perform a MLR analysis, several assumptions need to be made. We assume a linear relationship between the response `Wage` and the covariates
 
 $$ y_i = \beta_0 + \beta_1 x_{i1} + ... + \beta_k x_{ik} + \epsilon_i $$
-Also, the errors $\epsilon_i$ are assumed to be independent, identically distributed with mean $0$ and constant variance $\sigma^2$. If we wish to construct confidence intervals and compute test statistics we must also assume normality in the errors $\epsilon_i \sim N(0, \sigma^2)$
+The errors $\epsilon_i$ are assumed to be independent, identically distributed with mean $0$ and constant variance $\sigma^2$. If we wish to construct confidence intervals and compute test statistics we must also assume normality in the errors $\epsilon_i \sim N(0, \sigma^2)$
 SPØR METTE OM ANTAGELSENE KOMMER I RIKTIG REKKEFØLGE HER
 
-TASK 2a
+# Part 2: Simple lienar regression with the `mylm` package
+
+## a)
+
+Tasks: 
+* Fill in the missing parts of the `mylm` function ...
+* Fit a simple linear regression model to the data ...
+
+Answer:
+
 We develop our `mylm` to estimate the coefficients using the least squares estimator
-$$ \hat{\beta} = (X^T X)^{-1} X^T Y $$
-And confirm that this results in the same coefficient estimates as the included `lm` function
+$$ \hat{\beta} = (X^T X)^{-1} X^T Y $$.
+We confirm that this results in the same coefficient estimates as the included `lm` function
 ```{r}
 library(mylm)
 model1 = mylm(wages ~ education, data=SLID)
@@ -75,41 +77,65 @@ model2 = lm(wages ~education, data=SLID)
 print(model2)
 ```
 
-TASK 2b
+## b)
 
-INSERT HATS HERE
+Tasks: 
+* Develop the `mylm` function further, so it can calculate the estimated covariance matrix of the parameters...
+* What are the estimates and the SE of the intercept and the regression coefficients for this model?
+* Fill in the missing parts in summary s.t. it gives a similare table of significance-tests.
 
-As $\beta = (X^T X)^{-1} X^T Y$ is a linear transformation of $Y$ and $Cov(Y) = \sigma^2 I$, 
-$$Cov(\beta) = (X^T X)^{-1} X^T Cov(Y) X (X^T X)^{-1} = (X^T X)^{-1} \sigma^2$$
+Answer:
+
+As $\hat{\beta} = (X^T X)^{-1} X^T Y$ is a linear transformation of $Y$ and it is assumed that $Cov(Y) = \sigma^2 I$, 
+$$Cov(\hat{\beta}) = (X^T X)^{-1} X^T Cov(Y) X (X^T X)^{-1} = (X^T X)^{-1} \sigma^2$$
 As we have also assumed that $Y \sim N(\beta X, \sigma^2)$, we get that
 $$ \hat{\beta} \sim N(\beta, (X^T X)^{-1} \sigma^2) $$
 
 We can then test the significance of the coefficients by computing the test statistics 
-$$ z_j = \frac{(\beta_j - 0)}{ (c_{jj} \sigma^2)}, \quad c_{jj} = Cov(\beta)_{jj}$$
+$$ z_j = \frac{(\beta_j - 0)}{ (c_{jj} \sigma^2)}, \quad c_{jj} = (X^T X)^{-1}_{jj}$$
 And the corresponding p-values 
-$$ p_j = 2 Pr(Z \geq  | z_j |) $$
-Note that we in `mylm` assume asymptotic results ($n - p$ very large) and we can then use the approximation $\hat{\sigma}^2 = \sigma^2$ without using the t-distribution.
+$$ p_j = 2 \Pr(Z \geq  | z_j |) $$
+Note that we in `mylm` assume asymptotic results ($n - p$ very large) and use the approximation $\hat{\sigma}^2 = \sigma^2$. If we did not assume asymptotic results we would have to use the t-distribution.
 
-Task2c
+```{r, echo=F}
+summary(model1)
+```
 
-In `mylm` we implement the plot function as a comparison of the fitted values and the residuals. This should show no structure
+In our model we get the coefficient values $\hat{\beta_0} = 4.97$ and $\hat{\beta_1} = 0.79$ with the corresponding estimated standard errors $\widehat{SE(\beta_0)} = 0.53$ and $\widehat{SE(\beta_1)} = 0.039$. This gives us test statistics $z_0 = 9.30$ and $z_1 = 20.28$, which are both highly significant under model assumptions. 
+
+The coefficients can be interpreted as following: increasing `education` by one unit will increase the model response $\hat{Y}$ by $0.79$ units. The `(Intercept)` is the mean of the responses, and is the model response in the case that `education = 0`. If our model assumptions are correct and our data is a sufficiently good representation of the remaining population we would also, on average, expect the same effects of the coefficients on the real response $Y$, `wages`.
+
+## c)
+
+Tasks:
+* Implement a plot function for the `mylm` class that makes a scatter plot with fitted values on the $x$-axis and the residuals on the $y$-axis. 
+* Comment on the plot
+
+Answers:
+In `mylm` we implement the plot function with the fitted values on the $x$-axis and the residuals on the $y$-axis.
 ```{r}
 plot(model1)
 ```
+From the plot we see that for lower values the residuels are mostly positive, whereas for higher values the are centered at $0$. This means that there is some violation of the homoscedasticity of the errors. This is expected, as $Y$ cannot be lower than $0$ (negative wages does not make sense). We also observe that at higher fitted values, the density function is has a larger left tail (towards higher values) than left tail. This is also expected, as we again have a floor for the residuals (cannot have negative wages) but no roof. In summary, there is some violation of both the homoscedasticity and normality of the errors. 
 
+## d)
 
-Task2d
-
-The residual sum of squares `SSE` is the sum of squares  $\sum^n (y_i - \hat{y}_i)^2$. The degrees of freedom for this model is the number of observations minus the number of fitted parameters, $n - p$. The total sum of squares similarly defined as $\sum^n (y_i - \bar{y})^2$. Under $H_0$, i.e. the response is uncorrelated with all covariates, 
+The residual sum of squares `SSE` is the sum of squares  $\sum^n (y_i - \hat{y}_i)^2$. The degrees of freedom for this model is the number of observations minus the number of fitted parameters, $n - p$. The total sum of squares `SST` is similarly defined as $\sum^n (y_i - \bar{y})^2$. Under $H_0$, i.e. the response is uncorrelated with all covariates, 
 $$\frac{(SST - SSE) / (p-1)}{SSE / (n - p)} \sim F_{p-1, n-p}$$
-Again we assume that $(n - p) \rightarrow \infty$ results and get 
+Again we assume asymptotic results, i.e. that $(n - p) \rightarrow \infty$, and get 
 $$\frac{(SST - SSE)}{SSE / (n-p)} \sim \chi^2_{p-1}$$
 Which we can use to test the significance of the total regression. 
 ```{r}
 cat("Chi-square test statistic: ", model1$F_statistic, "\n")
 cat("p-val: ", model1$F_p_val)
 ```
-In a simple linear regression, $p = 2$ and the $z$-statistic and $\chi^2$-statistic becomes equivalent measures. THIS CAN BE SHOWN ANALYTICALLY. We confirm this by listing the critical $Z$-values of some some quantiles along with square of the $\chi^2$-values for the same quantiles. Note that the normal distributed quantiles are two-sided wheres the $\chi^2$ quantiles are one-sided. 
+In simple linear regression, $p = 2$ and the null hypothesis for the tests tested by the  $z$-statistic and $\chi^2$-statistic become equivalent. In addition, we have that If $Z_1 \sim N(0, 1)$, we have that
+$$ Z_1^2 \sim \chi^2_1,$$
+Which means that the $z$- and $/chi^2$ statistics will reject the null hypothesis at the same levels of significance.
+THIS CAN BE SHOWN ANALYTICALLY.
+KOM TILBAKE TIL DENNE
+
+We confirm this by listing the critical $Z$-values of some some quantiles along with square of the $\chi^2$-values for the same quantiles. Note that the normal distributed quantiles are two-sided wheres the $\chi^2$ quantiles are one-sided. 
 ```{r}
 interval = c(0.70, 0.85, 0.90, 0.95)
 interval2 = c(0.40, 0.60, 0.80, 0.90)
@@ -117,43 +143,65 @@ cat(abs(qnorm(interval)), "\n")
 cat(sqrt(qchisq(interval2, 1)))
 ```
 
-Task2e
+## e)
 
-The coefficient of determination $R^2$ is the proportion of variance explained by the regression.  It is the square of the sample correlation between $y$ and $\hat{Y}$. 
+The coefficient of determination, $R^2$, is the square of the sample correlation between $y$ and $\hat{Y}$. It is a measure of the proportion of variance explained by the regression. 
 $$ R^2 = \frac{SSR}{SST} = 1 - \frac{SSE}{SST}$$
+We observe from the summary that in our model we get $R^2 = 0.09$, which indicates that we are not able to explain a large amount of the variance in the data using our model. This might indicate that the response we are trying to model, `wages`, has high variability, or that our model is too simple capture the true probability density function. In this example we suspect it to be a combination of both. 
 
-Task3a
+$ Part 3: Multiple linear regression
 
+## a)
+So far we have implemented the our `mylm`to handle both simple and multivariate linear regression. For the details of implementation, see Part 1. 
 ```{r}
-model2 = mylm(wages ~ education + age, data = SLID)
-summary(model2)
+model3 = mylm(wages ~ education + age, data = SLID)
 ```
 
-Task3b
-
-INTERPRET THE PARAMETERS HERE
+## b)
 
 ```{r}
-model20 = mylm(wages ~ education, data=SLID)
-model21 = mylm(wages ~ age, data=SLID)
-summary(model20)
-summary(model21)
+summary(model3)
+```
+In our model we get the coefficient values $\hat{\beta_0} = -6.02$, $\hat{\beta}_{edu} = 0.902$, $\hat{\beta}_{age} = 0.257$ with the corresponding estimated standard errors $\widehat{SE}(\beta_0) = 0.619$, $\widehat{SE}(\beta_{edu}) = 0.036$ and $\widehat{SE}(\beta_{age}) = 0.257$. This gives us test statistics $z_0 = -9.73$, $z_1 = 25.2$ and $z_2 = 28.7$, which are all highly significant under model assumptions. 
+
+The coefficients can be interpreted as following: increasing only `education` by one unit will increase the model response $\hat{Y}$ by $0.902$ units. Increasing only `age` by one unit will increase the model response $\hat{Y}$ by $0.257$ units. The `(Intercept)` is the mean of the responses, and is the model response in the case that $'education' = 0$ and $'age'=0$. If our model assumptions are correct and our data is a sufficiently good representation of the remaining population we would also, on average, expect the same effects of the coefficients on the real response $Y$, `wages`.
+
+## c)
+
+```{r}
+model30 = mylm(wages ~ education, data=SLID)
+model31 = mylm(wages ~ age, data=SLID)
+summary(model30)
+summary(model31)
 ```
 
 ANSWER THIS: Why and when does the parameter estimates found (using two simple and one multiple) differ? 
 
-Task4
+The parameter estimates for the simple and multiple regression differ if the covariates are correlated. Then, in the case of the simple regression, the single explanatory variable will be able to explain some of the variance that would otherwise be explained by the additional explanatory variable. 
 
+We confirm this by observing that `education` and `age` has a weak positive correlation. 
 ```{r}
-model30 = mylm(wages ~ sex + age + language + I(education^2), data=SLID)
-summary(model30)
-plot(model30)
+model3$corr_coeff
 ```
 
+## Part 4: Testing the `mylm`package
+
+Tasks:
+* Write a few sentences about the interpretation and significance of the parameters, and mention one small change that could make the model better. 
+
 ```{r}
-model31 = mylm(wages ~ language + education + language*education, data=SLID)
-summary(model31)
-plot(model31)
+model40 = mylm(wages ~ sex + age + language + I(education^2), data=SLID)
+summary(model40)
+plot(model40)
+```
+
+The difference between this model and earlier MLR is that we are now using $'education'^2$
+
+
+```{r}
+model41 = mylm(wages ~ language + education + language*education, data=SLID)
+summary(model41)
+plot(model41)
 ```
 
 ```{r}

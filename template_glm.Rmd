@@ -207,6 +207,8 @@ The difference between this model and earlier MLR is that we are now a squared t
 $$ Y_i = \beta_0 + \beta_{sex} x_{i, sex} + \beta_{age} x_{i, age} + \beta_{lan} x_{i, lan} + \beta_{edu^2} x_{i, edu}^2 + \epsilon_i.$$
 A p-value of <2e-16 signifies that the total regression is significant. 
 
+SKRIV OM DE ULIKE VERDIENE AV COEFFICIENT ESTIMATES ER POSITIVE (E.G. MENN TJENER MER, TJENER MER NÅR MAN BLIR ELDRE).
+
 The coefficient $\hat{\beta}_{edu^2}$ can be interpreted as the following: increasing the square of `education` by one unit will increase the model response, $\hat{Y}$, by $0.035$ units. All remaining coefficients can be interpreted as in Part 3b. We notice that all variables attain a high level of significance with the exception of language. Thus, to improve the model, language should be removed, as even under model assumptions it is probable that it is uncorrelated with the response. 
 
 The error plot shows a lower bound of the residuals in the left corner. Again the explanation is that we cannot have negative `wages`. Beyond this, we observe a high level of homoscedasticity and normality in our errors, which indicates that our model assumptions are not unreasonable. 
@@ -242,5 +244,12 @@ plot(model42)
 
 
 Now we have a model without intercept. Our linear model assumption is now
-$$ Y_i = \beta_{edu} x_{i, edu}.$$
+$$ Y_i = \beta_{edu} x_{i, edu} + \epsilon_i.$$
+
+The interpretation of this model is that `wage` is only a scaling of `education`, with some individual differences $\epsilon_i$. From a realistic point of view, this model does not make sense, seeing as one would not expect zero income with zero education, as some jobs does not require education at all. Thus, the model would be improved if we add intercept.
+
+The coefficient estimate of `education` is positive and significant at a 0.001 level, which is as expected because higher education usually equates to higher income.
+
+
+
 

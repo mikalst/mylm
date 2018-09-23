@@ -204,8 +204,10 @@ plot(model40)
 ```
 
 The difference between this model and earlier MLR is that we are now a squared term, $'education'^2$. Our linear model assumption is now,
-$$ Y_i = \beta_0 + \beta_{sex} x_{i, sex} + \beta_{age} x_{i, age} + \beta_{lan} x_{i, lan} + \beta_{edu^2} x_{i, edu}^2 + \epsilon_i $$
-The coefficient $\hat{\beta}_{edu^2}$ can be interpreted as following: increasing the square of `education` by one unit will increase the model response, $\hat{Y}$, by $0.035$ units. All remaining coefficients can be interpreted as in Part 3b. We notice that all variables attain a high level of significance with the exception of language. Thus language should be removed from the model, as even under model assumptions it is probable that it is uncorrelated with the response. 
+$$ Y_i = \beta_0 + \beta_{sex} x_{i, sex} + \beta_{age} x_{i, age} + \beta_{lan} x_{i, lan} + \beta_{edu^2} x_{i, edu}^2 + \epsilon_i.$$
+A p-value of <2e-16 signifies that the total regression is significant. 
+
+The coefficient $\hat{\beta}_{edu^2}$ can be interpreted as the following: increasing the square of `education` by one unit will increase the model response, $\hat{Y}$, by $0.035$ units. All remaining coefficients can be interpreted as in Part 3b. We notice that all variables attain a high level of significance with the exception of language. Thus, to improve the model, language should be removed, as even under model assumptions it is probable that it is uncorrelated with the response. 
 
 The error plot shows a lower bound of the residuals in the left corner. Again the explanation is that we cannot have negative `wages`. Beyond this, we observe a high level of homoscedasticity and normality in our errors, which indicates that our model assumptions are not unreasonable. 
 
@@ -217,22 +219,28 @@ plot(model41)
 
 Now we have included an interaction term. Our linear model assumption is now,
 
-$$ Y_i = \beta_0 + \beta_{edu} x_{i, edu} + \beta_{lan} x_{i, lan} + \beta_{edu \& lan} x_{i, edu} x_{i, lan} + \epsilon_i $$
+$$ Y_i = \beta_0 + \beta_{edu} x_{i, edu} + \beta_{lan} x_{i, lan} + \beta_{edu \& lan} x_{i, edu} x_{i, lan} + \epsilon_i.$$
+We interpret the interaction term between `language` and `education` in the following way. When the level of language increases from 0 to 1 (from `languageEnglish` to `languageFrench`), the response is incresed by the coefficient estimate for `languageFrench` plus an interaction term, which is the coefficient estimate for the interaction multiplied by the education covariate, equivalently
+$$Y_{increase} = \beta_{languageFrench} + \beta_{edu\&lan} x_{edu}.$$
+
+A p-value of <2e-16 signifies that the total regression is significant. 
+
+The intercept, `languageOther` and `education` are all significant on a 0.001 level. The interaction between `languageOther`and `education` is significant on a 0.01 level, `languageFrench` on a 0.05 level and the interaction between `languageFrench` and `education` on a 0.1 level. 
+
+Seeing as `languageFrench` and `languageOther` have roughly the same coefficient estimate, one could try to merge these two levels of the language covariate into one, so the `language` covariate only will have two levels, instead of three. 
+
+In addition, a multiple R-squared of $0.1$ can be interpreted as the model explaining 10% of the variance, this is not a high number, and the model could be improved by for example adding another covariate, e.g. `sex`.
 
 
 
 ```{r}
-model32 = mylm(wages ~ education - 1, data=SLID)
-summary(model32)
-plot(model32)
+model42 = mylm(wages ~ education - 1, data=SLID)
+summary(model42)
+plot(model42)
 ```
 
 
 
-
-
-
-
-
-
+Now we have a model without intercept. Our linear model assumption is now
+$$ Y_i = \beta_{edu} x_{i, edu}.$$
 

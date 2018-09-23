@@ -195,14 +195,22 @@ summary(model40)
 plot(model40)
 ```
 
-The difference between this model and earlier MLR is that we are now using $'education'^2$
+The difference between this model and earlier MLR is that we are now a squared term, $'education'^2$. Our linear model assumption is now,
+$$ Y_i = \beta_0 + \beta_{sex} x_{i, sex} + \beta_{age} x_{i, age} + \beta_{lan} x_{i, lan} + \beta_{edu^2} x_{i, edu}^2 + \epsilon_i $$
+The coefficient $\hat{\beta}_{edu^2}$ can be interpreted as following: increasing the square of `education` by one unit will increase the model response, $\hat{Y}$, by $0.035$ units. All remaining coefficients can be interpreted as in Part 3b. We notice that all variables attain a high level of significance with the exception of language. Thus language should be removed from the model, as even under model assumptions it is probable that it is uncorrelated with the response. 
 
+The error plot shows a lower bound of the residuals in the left corner. Again the explanation is that we cannot have negative `wages`. Beyond this, we observe a high level of homoscedasticity and normaly in our errors, which indicates that our model assumptions are not unreasonable. 
 
 ```{r}
 model41 = mylm(wages ~ language + education + language*education, data=SLID)
 summary(model41)
 plot(model41)
 ```
+
+Now we have included an interaction term. Our linear model assumption is now,
+
+$$ Y_i = \beta_0 + \beta_{edu} x_{i, edu} + \beta_{lan} x_{i, lan} + \beta_{edu \& lan} x_{i, edu} x_{i, lan} + \epsilon_i $$
+
 
 ```{r}
 model32 = mylm(wages ~ education - 1, data=SLID)

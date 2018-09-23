@@ -175,9 +175,19 @@ summary(model31)
 
 ANSWER THIS: Why and when does the parameter estimates found (using two simple and one multiple) differ? 
 
-The parameter estimates for the simple and multiple regression differ if the covariates are correlated. Then, in the case of the simple regression, the single explanatory variable will be able to explain some of the variance that would otherwise be explained by the additional explanatory variable. 
+The parameter estimates for the simple and multiple regression differ if the covariates are correlated. Then, in the case of the simple regression, the single explanatory variable will be able to explain some of the variance that would otherwise be explained by the additional explanatory variable. The $(p, p)$ matrix $(X^T X)$ is
+$$ \begin{pmatrix} x_0^T x_0 & x_0^T x_1 & x_0^T x_2 \\
+x_1^T x_0 & x_1^T x_1 & x_1^T x_2 \\
+x_2^T x_0 & x_2^T x_1 & x_2^T x_2 \\ 
+\end{pmatrix},$$
+If we have uncorrelated covariates, we get that $x_i^T x_j = 0 \quad \forall i \neq j$, such that $(X^T X)$ becomes
+$$ \begin{pmatrix} x_0^T x_0 & 0 & 0 \\
+0 & x_1^T x_1 & 0 \\
+0 & 0 & x_2^T x_2 \\ 
+\end{pmatrix},$$
+which is diagonal and thus each coeffecient estimate $\hat{\beta}_j = (x_j^T x_j)^{-1} x_j^T y_j$ is independent of the other covariates. 
 
-We confirm this by observing that `education` and `age` has a weak positive correlation. 
+In our case we get different estimates in the simple and mupltiple case, which is reasonable as `education` and `age` have a weak positive correlation. 
 ```{r}
 model3$corr_coeff
 ```
@@ -208,6 +218,7 @@ plot(model41)
 Now we have included an interaction term. Our linear model assumption is now,
 
 $$ Y_i = \beta_0 + \beta_{edu} x_{i, edu} + \beta_{lan} x_{i, lan} + \beta_{edu \& lan} x_{i, edu} x_{i, lan} + \epsilon_i $$
+
 
 
 ```{r}

@@ -101,17 +101,12 @@ Note that we in `mylm` assume asymptotic results ($n - p$ very large) and use th
 summary(model1)
 ```
 
-In our model we get the coefficient values $\hat{\beta_0} = 4.97$ and $\hat{\beta_1} = 0.79$ with the corresponding estimated standard errors $\widehat{SE(\beta_0)} = 0.53$ and $\widehat{SE(\beta_1)} = 0.039$. This gives us test statistics $z_0 = 9.30$ and $z_1 = 20.28$, which are both highly significant under model assumptions. 
+In our model we get the coefficient values $\hat{\beta_0} = 4.97$ and $\hat{\beta_1} = 0.79$ with the corresponding estimated standard errors $\widehat{SE(\beta_0)} = 0.53$ and $\widehat{SE(\beta_1)} = 0.039$. This gives us test statistics $z_0 = 9.30$ and $z_1 = 20.28$, which are both highly significant under model assumptions.
 
 The coefficients can be interpreted as following: increasing `education` by one unit will increase the model response $\hat{Y}$ by $0.79$ units. The `(Intercept)` is the mean of the responses, and is the model response in the case that `education = 0`. If our model assumptions are correct and our data is a sufficiently good representation of the remaining population we would also, on average, expect the same effects of the coefficients on the real response $Y$, `wages`.
 
 ## c)
 
-Tasks:
-* Implement a plot function for the `mylm` class that makes a scatter plot with fitted values on the $x$-axis and the residuals on the $y$-axis. 
-* Comment on the plot
-
-Answers:
 In `mylm` we implement the plot function with the fitted values on the $x$-axis and the residuals on the $y$-axis.
 ```{r}
 plot(model1)
@@ -173,8 +168,6 @@ summary(model30)
 summary(model31)
 ```
 
-ANSWER THIS: Why and when does the parameter estimates found (using two simple and one multiple) differ? 
-
 The parameter estimates for the simple and multiple regression differ if the covariates are correlated. Then, in the case of the simple regression, the single explanatory variable will be able to explain some of the variance that would otherwise be explained by the additional explanatory variable. The $(p, p)$ matrix $(X^T X)$ is
 $$ \begin{pmatrix} x_0^T x_0 & x_0^T x_1 & x_0^T x_2 \\
 x_1^T x_0 & x_1^T x_1 & x_1^T x_2 \\
@@ -194,8 +187,6 @@ model3$corr_coeff
 
 ## Part 4: Testing the `mylm`package
 
-Tasks:
-* Write a few sentences about the interpretation and significance of the parameters, and mention one small change that could make the model better. 
 
 ```{r}
 model40 = mylm(wages ~ sex + age + language + I(education^2), data=SLID)
@@ -223,14 +214,13 @@ $$ Y_i = \beta_0 + \beta_{edu} x_{i, edu} + \beta_{lan} x_{i, lan} + \beta_{edu 
 We interpret the interaction term between `language` and `education` in the following way. When the level of language increases from 0 to 1 (from `languageEnglish` to `languageFrench`), the response is incresed by the coefficient estimate for `languageFrench` plus an interaction term, which is the coefficient estimate for the interaction multiplied by the education covariate, equivalently
 $$Y_{increase} = \beta_{languageFrench} + \beta_{edu\&lan} x_{edu}.$$
 
-A p-value of <2e-16 signifies that the total regression is significant. 
+A $\chi^2$-statistic with a corresponding p-value $<2.2 \times 10^{-16}$ signifies that the total regression is significant. The intercept, `languageOther` and `education` are all significant on a $0.001$ level. The interaction between `languageOther`and `education` is significant on a $0.01$ level, `languageFrench` on a $0.05$ level and the interaction between `languageFrench` and `education` on a $0.1$ level. 
 
-The intercept, `languageOther` and `education` are all significant on a 0.001 level. The interaction between `languageOther`and `education` is significant on a 0.01 level, `languageFrench` on a 0.05 level and the interaction between `languageFrench` and `education` on a 0.1 level. 
+Seeing as `languageFrench` and `languageOther` have roughly the same coefficient estimate, one could use the natural assumption that they have the same effect and merge these two levels into one, giving `language` only two levels. 
 
-Seeing as `languageFrench` and `languageOther` have roughly the same coefficient estimate, one could try to merge these two levels of the language covariate into one, so the `language` covariate only will have two levels, instead of three. 
+In addition, a multiple R-squared of $0.1$ can be interpreted as the model explaining 10% of the variance, this is not a high number, and the model could be improved by for example adding another covariate, e.g. `sex` or `age`. 
 
-In addition, a multiple R-squared of $0.1$ can be interpreted as the model explaining 10% of the variance, this is not a high number, and the model could be improved by for example adding another covariate, e.g. `sex`.
-
+The error plot shows the same lower bound as previously discussed. Beyond that we see that the errors have a high level of homoscedasticity for higher fitted values. For lower fitted values we see some off-centering but around a relatively small amount of points. The thicker density around $0$ also suggests a reasonable amount of normality. 
 
 
 ```{r}
@@ -243,4 +233,6 @@ plot(model42)
 
 Now we have a model without intercept. Our linear model assumption is now
 $$ Y_i = \beta_{edu} x_{i, edu}.$$
+
+
 

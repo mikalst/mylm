@@ -1,16 +1,15 @@
 --- 
-title: "TMA4315: Compulsory exercise 1 (title)" 
-subtitle: "Group 0: Henrik Syversveen Lie, Mikal Stapnes" 
-date: "`r format(Sys.time(), '%d.%m.%Y')`" # the current date, can be regular text as well
-output: # 3rd letter intentation hierarchy
+title: 'TMA4315: Compulsory exercise 1 (title)'
+output:
+  pdf_document:
+    toc: yes
+    toc_depth: '2'
   html_document:
-    toc: true
-    toc_float: true
+    toc: yes
     toc_depth: 2
-  # pdf_document:
-  #  toc: false
-  #  toc_depth: 2
-
+    toc_float: yes
+date: "`r format(Sys.time(), '%d.%m.%Y')`"
+subtitle: 'Group 0: Henrik Syversveen Lie, Mikal Stapnes'
 ---
 
 ```{r setup, include = FALSE}
@@ -131,7 +130,7 @@ cat("p-val: ", model1$F_p_val)
 ```
 In simple linear regression, $p = 2$ and the null hypothesis for the tests tested by the  $z$-statistic and $\chi^2$-statistic become equivalent. This comes simply as a result of the definition of a $\chi^2$ variable, which is that if $Z_1, Z_2, \dots, Z_k \sim N(0, 1)$, we have that the sum of their squares, 
 $$ Q = \sum_{i=1}^{k}Z_i^2,$$
-is distributed according to the $\chi^2$ distribution with $k$ degrees of freedom, denoted as $Q \sim \chi^2_k$. Seeing as the $z$-statistic is standard normal distributed, its square $Z^2$ will be $\chi^2$ distributed with $1$ degree or freedom, $Z^2 \sim \chi^2_1$. This means that the $z$- and $/chi^2$ statistics will reject the null hypothesis at the same levels of significance.
+is distributed according to the $\chi^2$ distribution with $k$ degrees of freedom, denoted as $Q \sim \chi^2_k$. Seeing as the $z$-statistic is standard normal distributed, its square $Z^2$ will be $\chi^2$ distributed with $1$ degree or freedom, $Z^2 \sim \chi^2_1$. This means that the $z$- and $\chi^2$ statistics will reject the null hypothesis at the same levels of significance.
 
 
 We confirm this by listing the critical $Z$-values of some some quantiles along with square of the $\chi^2$-values for the same quantiles. Note that the normal distributed quantiles are two-sided wheres the $\chi^2$ quantiles are one-sided. 

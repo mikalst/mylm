@@ -45,8 +45,8 @@ The errors $\epsilon_i$ are assumed to be independent, identically distributed w
 ## a)
 
 We develop our `mylm` to estimate the coefficients using the least squares estimator
-$$ \hat{\beta} = (X^T X)^{-1} X^T Y $$.
-We confirm that this results in the same coefficient estimates as the included `lm` function
+$$ \hat{\beta} = (X^T X)^{-1} X^T Y.$$
+We confirm that this results in the same coefficient estimates as the included `lm` function,
 ```{r}
 library(mylm)
 model1 = mylm(wages ~ education, data=SLID)
@@ -56,24 +56,31 @@ model2 = lm(wages ~education, data=SLID)
 print(model2)
 ```
 
+We note that in the case of MLR, the maximum likelihood estimator is the same as the least squares estimator. 
+
 ## b)
 
 As $\hat{\beta} = (X^T X)^{-1} X^T Y$ is a linear transformation of $Y$ and it is assumed that $\text{Cov}(Y) = \sigma^2 I$, 
 $$\text{Cov}(\hat{\beta}) = (X^T X)^{-1} X^T \text{Cov}(Y) X (X^T X)^{-1} = (X^T X)^{-1} \sigma^2$$
-As we have also assumed that $Y \sim N(\beta X, \sigma^2)$, we get that
+As we have also assumed that $Y \sim N(X \beta, \sigma^2)$, we get that
 $$ \hat{\beta} \sim N(\beta, (X^T X)^{-1} \sigma^2) $$
 
-We can then test the significance of the coefficients by computing the test statistics 
-$$ z_j = \frac{(\beta_j - 0)}{ (c_{jj} \sigma^2)}, \quad c_{jj} = (X^T X)^{-1}_{jj}$$
-And the corresponding p-values 
+We can then conduct a hypothesis test with hypotheses
+$$H_0: \beta_j = 0, \quad H_1: \beta_j \neq 0.$$ 
+Which we test using the test statistics
+$$ z_j = \frac{(\beta_j - 0)}{ (c_{jj} \sigma^2)}, \quad c_{jj} = (X^T X)^{-1}_{jj},$$
+and the corresponding p-values 
 $$ p_j = 2 \Pr(Z \geq  | z_j |) $$
-Note that we in `mylm` assume asymptotic results ($n - p$ very large) and use the approximation $\hat{\sigma}^2 = \sigma^2$. If we did not assume asymptotic results we would have to use the t-distribution.
+Note that we in `mylm` assume asymptotic results ($n - p$ very large), which gives
+$$ z_j \sim N(0, 1).$$
+If we did not assume asymptotic results we would have that
+$$ z_j \sim T_{n-p}$$
 
 ```{r, echo=F}
 summary(model1)
 ```
 
-In our model we get the coefficient values $\hat{\beta_0} = 4.97$ and $\hat{\beta_1} = 0.79$ with the corresponding estimated standard errors $\widehat{SE(\beta_0)} = 0.53$ and $\widehat{SE(\beta_1)} = 0.039$. This gives us test statistics $z_0 = 9.30$ and $z_1 = 20.28$, which are both highly significant under model assumptions.
+In our model we get the coefficient values $\hat{\beta_0} = 4.97$ and $\hat{\beta_1} = 0.79$ with the corresponding estimated standard errors $\widehat{SE}(\beta_0) = 0.53$ and $\widehat{SE}(\beta_1) = 0.039$. This gives us test statistics $z_0 = 9.30$ and $z_1 = 20.28$, which are both highly significant under model assumptions.
 
 The coefficients can be interpreted as following: increasing `education` by one unit will increase the model response $\hat{Y}$ by $0.79$ units. The `(Intercept)` is the mean of the responses, and is the model response in the case that `education = 0`. If our model assumptions are correct and our data is a sufficiently good representation of the remaining population we would also, on average, expect the same effects of the covariates on the real response $Y$, `wages`.
 
@@ -83,22 +90,22 @@ In `mylm` we implement the plot function with the fitted values on the $x$-axis 
 ```{r}
 plot(model1)
 ```
-From the plot we see that for lower values the residuals are mostly positive, whereas for higher values the are centered at $0$. This is expected, as $Y$ cannot be lower than $0$ (negative wages does not make sense). The variance also seems to increase with higher fitted values, meaning that there is some violation of the homoscedasticity of the errors. At higher fitted values, the density function is has a larger left tail (towards higher values) than left tail, which is in violation with the normality assumption of the error. These violations indicate that our model assumptions are not entirely reasonable and we should proceed with caution when conducting inference. 
+From the plot we see that for lower values the residuals are mostly positive, whereas for higher values they are centered at $0$. This is expected, as $Y$ cannot be lower than $0$ (negative wages does not make sense). The variance also seems to increase with higher fitted values, meaning that there is some violation of the homoscedasticity of the errors. At higher fitted values, the density has a larger left tail (towards higher values) than right tail, which is in violation with the normality assumption of the errors. These violations indicate that our model assumptions are not entirely reasonable and we should proceed with caution when conducting inference. 
 
 ## d)
 
-The residual sum of squares `SSE` is the sum of squares  $\sum^n (y_i - \hat{y}_i)^2$. The degrees of freedom for this model is the number of observations minus the number of fitted parameters, $n - p$. The total sum of squares `SST` is similarly defined as $\sum^n (y_i - \bar{y})^2$. Under $H_0$, i.e. the response is uncorrelated with all covariates, 
-$$\frac{(SST - SSE) / (p-1)}{SSE / (n - p)} \sim F_{p-1, n-p}$$
+The residual sum of squares `SSE` is the sum of squares  $\sum^n_{i=1} (y_i - \hat{y}_i)^2$. The degrees of freedom for this model is the number of observations minus the number of fitted parameters, $n - p$. The total sum of squares `SST` is similarly defined as $\sum^n_{i=1} (y_i - \bar{y})^2$. The regression sum of squares is the difference $SST - SSE$. Under $H_0$ we have that
+$$\frac{(SST - SSE) / (p-1)}{SSE / (n - p)} \sim F_{p-1, n-p}.$$
 Again we assume asymptotic results, i.e. that $(n - p) \rightarrow \infty$, and get 
-$$\frac{(SST - SSE)}{SSE / (n-p)} \sim \chi^2_{p-1}$$
+$$\frac{(SST - SSE)}{SSE / (n-p)} \sim \chi^2_{p-1}.$$
 Which we can use to test the significance of the total regression. 
 ```{r}
 cat("Chi-square test statistic: ", model1$F_statistic, "\n")
 cat("p-val: ", model1$F_p_val)
 ```
-In simple linear regression, $p = 2$ and the $z$-test and $\chi^2$-test become equivalent with the same $H_0$. This comes as a result of the definition of a $\chi^2$ variable, which is that if $Z_1, Z_2, \dots, Z_k \sim N(0, 1)$, we have that the sum of their squares, 
+In simple linear regression, $p = 2$ and the $z$-test and $\chi^2$-test become equivalent tests of the same $H_0$. This comes as a result of the definition of a $\chi^2$ variable, which is that if $Z_1, Z_2, \dots, Z_k \sim N(0, 1)$, we have that the sum of their squares, 
 $$ Q = \sum_{i=1}^{k}Z_i^2,$$
-is distributed according to the $\chi^2$ distribution with $k$ degrees of freedom, denoted as $Q \sim \chi^2_k$. Seeing as the $z$-statistic is standard normal distributed, its square $Z^2$ will be $\chi^2$ distributed with $1$ degree or freedom, $Z^2 \sim \chi^2_1$. This means that the $z$- and $\chi^2$ statistics will reject the null hypothesis at the same levels of significance.
+is distributed according to the $\chi^2$ distribution with $k$ degrees of freedom, denoted as $Q \sim \chi^2_k$. Seeing as the $z$-statistic is standard normal distributed, its square $z^2$ will be $\chi^2$ distributed with $1$ degree or freedom, $z^2 \sim \chi^2_1$. This means that the $z$- and $\chi^2$ statistics will reject the null hypothesis at the same levels of significance.
 
 We confirm this by listing the critical $Z$-values of some some quantiles along with square of the $\chi^2$-values for the same quantiles. Note that the normal distributed quantiles are two-sided wheres the $\chi^2$ quantiles are one-sided. 
 ```{r}

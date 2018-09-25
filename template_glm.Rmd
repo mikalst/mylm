@@ -20,24 +20,10 @@ library(knitr)
 opts_chunk$set(tidy.opts = list(width.cutoff = 68), tidy = TRUE, warning = FALSE, error = FALSE, message = FALSE, echo = TRUE)
 ```
 
-To get a pdf file, make comments of the lines with the "html_document" information, and make the lines with the "pdf_document" information regular, and vice versa.
-
-
-# Part 1 (Explanatory analysis of the dataset)
-
-**Bold**
-
-_italic_
-
+# Part 1: Explanatory analysis of the dataset
 
 ## a)
 
-Task: 
-* Draw a matrix of diagnostic plots of all the variables and comment briefly on the relationship between some of the variables. 
-* Which assumptions do we need make about the data if we want to perform a multiple linear regression analysis?
-
-
-Answer:
 ```{r, eval=T, echo=FALSE}
 installed.packages("car")
 library(car)
@@ -53,17 +39,10 @@ If we want to perform a MLR analysis, several assumptions need to be made. We as
 
 $$ y_i = \beta_0 + \beta_1 x_{i1} + ... + \beta_k x_{ik} + \epsilon_i $$
 The errors $\epsilon_i$ are assumed to be independent, identically distributed with mean $0$ and constant variance $\sigma^2$. If we wish to construct confidence intervals and compute test statistics we must also assume normality in the errors $\epsilon_i \sim N(0, \sigma^2)$
-SPØR METTE OM ANTAGELSENE KOMMER I RIKTIG REKKEFØLGE HER
 
-# Part 2: Simple lienar regression with the `mylm` package
+# Part 2: Simple linear regression with the `mylm` package
 
 ## a)
-
-Tasks: 
-* Fill in the missing parts of the `mylm` function ...
-* Fit a simple linear regression model to the data ...
-
-Answer:
 
 We develop our `mylm` to estimate the coefficients using the least squares estimator
 $$ \hat{\beta} = (X^T X)^{-1} X^T Y $$.
@@ -79,15 +58,8 @@ print(model2)
 
 ## b)
 
-Tasks: 
-* Develop the `mylm` function further, so it can calculate the estimated covariance matrix of the parameters...
-* What are the estimates and the SE of the intercept and the regression coefficients for this model?
-* Fill in the missing parts in summary s.t. it gives a similare table of significance-tests.
-
-Answer:
-
-As $\hat{\beta} = (X^T X)^{-1} X^T Y$ is a linear transformation of $Y$ and it is assumed that $Cov(Y) = \sigma^2 I$, 
-$$Cov(\hat{\beta}) = (X^T X)^{-1} X^T Cov(Y) X (X^T X)^{-1} = (X^T X)^{-1} \sigma^2$$
+As $\hat{\beta} = (X^T X)^{-1} X^T Y$ is a linear transformation of $Y$ and it is assumed that $\text{Cov}(Y) = \sigma^2 I$, 
+$$\text{Cov}(\hat{\beta}) = (X^T X)^{-1} X^T \text{Cov}(Y) X (X^T X)^{-1} = (X^T X)^{-1} \sigma^2$$
 As we have also assumed that $Y \sim N(\beta X, \sigma^2)$, we get that
 $$ \hat{\beta} \sim N(\beta, (X^T X)^{-1} \sigma^2) $$
 
@@ -103,7 +75,7 @@ summary(model1)
 
 In our model we get the coefficient values $\hat{\beta_0} = 4.97$ and $\hat{\beta_1} = 0.79$ with the corresponding estimated standard errors $\widehat{SE(\beta_0)} = 0.53$ and $\widehat{SE(\beta_1)} = 0.039$. This gives us test statistics $z_0 = 9.30$ and $z_1 = 20.28$, which are both highly significant under model assumptions.
 
-The coefficients can be interpreted as following: increasing `education` by one unit will increase the model response $\hat{Y}$ by $0.79$ units. The `(Intercept)` is the mean of the responses, and is the model response in the case that `education = 0`. If our model assumptions are correct and our data is a sufficiently good representation of the remaining population we would also, on average, expect the same effects of the coefficients on the real response $Y$, `wages`.
+The coefficients can be interpreted as following: increasing `education` by one unit will increase the model response $\hat{Y}$ by $0.79$ units. The `(Intercept)` is the mean of the responses, and is the model response in the case that `education = 0`. If our model assumptions are correct and our data is a sufficiently good representation of the remaining population we would also, on average, expect the same effects of the covariates on the real response $Y$, `wages`.
 
 ## c)
 
@@ -111,7 +83,7 @@ In `mylm` we implement the plot function with the fitted values on the $x$-axis 
 ```{r}
 plot(model1)
 ```
-From the plot we see that for lower values the residuels are mostly positive, whereas for higher values the are centered at $0$. This means that there is some violation of the homoscedasticity of the errors. This is expected, as $Y$ cannot be lower than $0$ (negative wages does not make sense). We also observe that at higher fitted values, the density function is has a larger left tail (towards higher values) than left tail. This is also expected, as we again have a floor for the residuals (cannot have negative wages) but no roof. In summary, there is some violation of both the homoscedasticity and normality of the errors. 
+From the plot we see that for lower values the residuals are mostly positive, whereas for higher values the are centered at $0$. This is expected, as $Y$ cannot be lower than $0$ (negative wages does not make sense). The variance also seems to increase with higher fitted values, meaning that there is some violation of the homoscedasticity of the errors. At higher fitted values, the density function is has a larger left tail (towards higher values) than left tail, which is in violation with the normality assumption of the error. These violations indicate that our model assumptions are not entirely reasonable and we should proceed with caution when conducting inference. 
 
 ## d)
 
@@ -124,7 +96,7 @@ Which we can use to test the significance of the total regression.
 cat("Chi-square test statistic: ", model1$F_statistic, "\n")
 cat("p-val: ", model1$F_p_val)
 ```
-In simple linear regression, $p = 2$ and the null hypothesis for the tests tested by the $z$-statistic and $\chi^2$-statistic become equivalent. In addition, the $z$- and $\chi^2$-statistics become equivalent measure. This comes simply as a result of the definition of a $\chi^2$ variable, which is that if $Z_1, Z_2, \dots, Z_k \sim N(0, 1)$, we have that the sum of their squares, 
+In simple linear regression, $p = 2$ and the $z$-test and $\chi^2$-test become equivalent with the same $H_0$. This comes as a result of the definition of a $\chi^2$ variable, which is that if $Z_1, Z_2, \dots, Z_k \sim N(0, 1)$, we have that the sum of their squares, 
 $$ Q = \sum_{i=1}^{k}Z_i^2,$$
 is distributed according to the $\chi^2$ distribution with $k$ degrees of freedom, denoted as $Q \sim \chi^2_k$. Seeing as the $z$-statistic is standard normal distributed, its square $Z^2$ will be $\chi^2$ distributed with $1$ degree or freedom, $Z^2 \sim \chi^2_1$. This means that the $z$- and $\chi^2$ statistics will reject the null hypothesis at the same levels of significance.
 
@@ -140,27 +112,25 @@ cat(sqrt(qchisq(interval2, 1)))
 
 The coefficient of determination, $R^2$, is the square of the sample correlation between $y$ and $\hat{Y}$. It is a measure of the proportion of variance explained by the regression. 
 $$ R^2 = \frac{SSR}{SST} = 1 - \frac{SSE}{SST}$$
-We observe from the summary that in our model we get $R^2 = 0.09$, which indicates that we are not able to explain a large amount of the variance in the data using our model. This might indicate that the response we are trying to model, `wages`, has high variability, or that our model is too simple capture the true probability density function. In this example we suspect it to be a combination of both. 
+We observe from the summary that in our model we get $R^2 = 0.09$, which indicates that we are not able to explain a large amount of the variance in the data using our model. This might indicate that the response we are trying to model, `wages`, has high variability, or that our model is too simple capture the true distribution. In this example we suspect it to be a combination of both. 
 
-$ Part 3: Multiple linear regression
+# Part 3: Multiple linear regression
 
 ## a)
-So far we have implemented the our `mylm`to handle both simple and multivariate linear regression. For the details of implementation, see Part 1. 
+So far we have implemented the our `mylm`to handle both simple and multivariate linear regression. For implementation details, see Part 1. 
 ```{r}
 model3 = mylm(wages ~ education + age, data = SLID)
 ```
 
 ## b)
-
 ```{r}
 summary(model3)
 ```
-In our model we get the coefficient values $\hat{\beta_0} = -6.02$, $\hat{\beta}_{edu} = 0.902$, $\hat{\beta}_{age} = 0.257$ with the corresponding estimated standard errors $\widehat{SE}(\beta_0) = 0.619$, $\widehat{SE}(\beta_{edu}) = 0.036$ and $\widehat{SE}(\beta_{age}) = 0.257$. This gives us test statistics $z_0 = -9.73$, $z_1 = 25.2$ and $z_2 = 28.7$, which are all highly significant under model assumptions. 
+In our model we get the coefficient values $\hat{\beta_0} = -6.02$, $\hat{\beta}_{edu} = 0.902$, $\hat{\beta}_{age} = 0.257$ with the corresponding estimated standard errors $\widehat{SE}(\beta_0) = 0.619$, $\widehat{SE}(\beta_{edu}) = 0.036$ and $\widehat{SE}(\beta_{age}) = 0.257$. This gives us test statistics $z_0 = -9.73$, $z_1 = 25.2$ and $z_2 = 28.7$, which are all highly significant under model assumptions. We get a $\chi^2$-statistic of $661$ on $2$ degrees of freedom, which is indicates that the total regression is also highly significant. 
 
-The coefficients can be interpreted as following: increasing only `education` by one unit will increase the model response $\hat{Y}$ by $0.902$ units. Increasing only `age` by one unit will increase the model response $\hat{Y}$ by $0.257$ units. The `(Intercept)` is the mean of the responses, and is the model response in the case that $'education' = 0$ and $'age'=0$. If our model assumptions are correct and our data is a sufficiently good representation of the remaining population we would also, on average, expect the same effects of the coefficients on the real response $Y$, `wages`.
+The coefficients can be interpreted as following: increasing only `education` by one unit will increase the model response $\hat{Y}$ by $0.902$ units. Increasing only `age` by one unit will increase the model response $\hat{Y}$ by $0.257$ units. The `(Intercept)` is the mean of the responses, and is the model response in the case that `education` $ = 0$ and `age` $=0$. If our model assumptions are correct and our data is a sufficiently good representation of the remaining population we would also, on average, expect the same effects of the covariates on the real response $Y$, `wages`.
 
 ## c)
-
 ```{r}
 model30 = mylm(wages ~ education, data=SLID)
 model31 = mylm(wages ~ age, data=SLID)
@@ -168,7 +138,7 @@ summary(model30)
 summary(model31)
 ```
 
-The parameter estimates for the simple and multiple regression differ if the covariates are correlated. Then, in the case of the simple regression, the single explanatory variable will be able to explain some of the variance that would otherwise be explained by the additional explanatory variable. The $(p, p)$ matrix $(X^T X)$ is
+The parameter estimates for the simple and multiple regression differ if the covariates are correlated. Then, in the case of the simple regression, the single explanatory variable pick up some of the variance that would otherwise be explained by the additional explanatory variable. The $(p, p)$ matrix $(X^T X)$ is
 $$ \begin{pmatrix} x_0^T x_0 & x_0^T x_1 & x_0^T x_2 \\
 x_1^T x_0 & x_1^T x_1 & x_1^T x_2 \\
 x_2^T x_0 & x_2^T x_1 & x_2^T x_2 \\ 
@@ -185,7 +155,7 @@ In our case we get different estimates in the simple and mupltiple case, which i
 model3$corr_coeff
 ```
 
-## Part 4: Testing the `mylm`package
+# Part 4: Testing the `mylm`package
 
 
 ```{r}
@@ -196,13 +166,13 @@ plot(model40)
 
 The difference between this model and earlier MLR is that we are now a squared term, $'education'^2$. Our linear model assumption is now,
 $$ Y_i = \beta_0 + \beta_{sex} x_{i, sex} + \beta_{age} x_{i, age} + \beta_{lan} x_{i, lan} + \beta_{edu^2} x_{i, edu}^2 + \epsilon_i.$$
-A p-value of <2e-16 signifies that the total regression is significant. 
+Fitting our model, we see positive terms for the covariates `sex`, `age` and `education$^2$` and negative for both levels of `language`. 
 
-SKRIV OM DE ULIKE VERDIENE AV COEFFICIENT ESTIMATES ER POSITIVE (E.G. MENN TJENER MER, TJENER MER NÅR MAN BLIR ELDRE).
+The coefficient $\hat{\beta}_{edu^2}$ can be interpreted as the following: increasing the square of `education` by one unit will increase the model response, $\hat{Y}$, by $0.035$ units. We also notet that covariates that are fitted to a negative coefficient will produce a decrease in the model response $\hat{Y}$. All remaining coefficients can be interpreted as in 3b. 
 
-The coefficient $\hat{\beta}_{edu^2}$ can be interpreted as the following: increasing the square of `education` by one unit will increase the model response, $\hat{Y}$, by $0.035$ units. All remaining coefficients can be interpreted as in Part 3b. We notice that all variables attain a high level of significance with the exception of language. Thus, to improve the model, language should be removed, as even under model assumptions it is probable that it is uncorrelated with the response. 
+We notice that all variables attain a high level of significance with the exception of language. Thus, to improve the model, language should be removed, as even under model assumptions it is probable that it is uncorrelated with the response. The $\chi^2$-statistic of $345$ on $5$ degrees of freedom indicates that the total regression is highly significant. 
 
-The error plot shows a lower bound of the residuals in the left corner. Again the explanation is that we cannot have negative `wages`. Beyond this, we observe a high level of homoscedasticity and normality in our errors, which indicates that our model assumptions are not unreasonable. 
+The error plot shows a lower bound of the residuals in the left corner. Again the explanation is that we cannot have negative `wages`. Beyond this, we observe some level of homoscedasticity and normality in our errors, which indicates that our model assumptions are not entirely reasonable. 
 
 ```{r}
 model41 = mylm(wages ~ language + education + language*education, data=SLID)
@@ -213,7 +183,7 @@ plot(model41)
 Now we have included an interaction term. Our linear model assumption is now,
 
 $$ Y_i = \beta_0 + \beta_{edu} x_{i, edu} + \beta_{lan} x_{i, lan} + \beta_{edu \& lan} x_{i, edu} x_{i, lan} + \epsilon_i.$$
-We interpret the interaction term between `language` and `education` in the following way. When the level of language increases from 0 to 1 (from `languageEnglish` to `languageFrench`), the response is incresed by the coefficient estimate for `languageFrench` plus an interaction term, which is the coefficient estimate for the interaction multiplied by the education covariate, equivalently
+We interpret the interaction term between `language` and `education` in the following way. When the level of language increases from 0 to 1 (from `English` to `French`), the response is incresed by the coefficient estimate for `French` plus an interaction term, which is the coefficient estimate for the interaction multiplied by the `education` covariate,
 $$Y_{increase} = \beta_{languageFrench} + \beta_{edu\&lan} x_{edu}.$$
 
 A $\chi^2$-statistic with a corresponding p-value $<2.2 \times 10^{-16}$ signifies that the total regression is significant. The intercept, `languageOther` and `education` are all significant on a $0.001$ level. The interaction between `languageOther`and `education` is significant on a $0.01$ level, `languageFrench` on a $0.05$ level and the interaction between `languageFrench` and `education` on a $0.1$ level. 
@@ -222,11 +192,11 @@ Seeing as `languageFrench` and `languageOther` have roughly the same coefficient
 
 In addition, a multiple R-squared of $0.1$ can be interpreted as the model explaining 10% of the variance, this is not a high number, and the model could be improved by for example adding another covariate, e.g. `sex` or `age`. 
 
-The error plot shows the same lower bound as previously discussed. Beyond that we see that the errors have a high level of homoscedasticity for higher fitted values. For lower fitted values we see some off-centering but around a relatively small amount of points. The thicker density around $0$ also suggests a reasonable amount of normality. 
+The error plot shows the same lower bound as previously discussed. We observe a trend of increasing variance with higher fitted values. For lower fitted values we see some off-centering but around a relatively small amount of points. Again we observe a larger left tail. There is significant violation of both the centering, homoscedasticity and normality of the errors. 
 
 
 ```{r}
-model42 = mylm(wages ~ education - 1, data=SLID)
+model42 <- mylm(wages ~ education - 1, data=SLID)
 summary(model42)
 plot(model42)
 ```
@@ -236,12 +206,11 @@ plot(model42)
 Now we have a model without intercept. Our linear model assumption is now
 $$ Y_i = \beta_{edu} x_{i, edu} + \epsilon_i.$$
 
-The interpretation of this model is that `wage` is only a scaling of `education`, with some individual differences $\epsilon_i$. From a realistic point of view, this model does not make sense, seeing as one would not expect zero income with zero education, as some jobs does not require education at all. Thus, the model would be improved if we add intercept.
+The interpretation of this model is that `wage` is only a scaling of `education`, with some individual differences $\epsilon_i$. From a realistic point of view, this model does not make sense; one would not expect zero income with zero education, as some jobs does not require education at all. Thus, the model would be improved if we add intercept.
 
-The coefficient estimate of `education` is positive and significant at a 0.001 level, which is as expected because higher education usually equates to higher income.
+The coefficient estimate of `education` is positive and significant at a $0.001$ level, which is as expected because higher education usually equates to higher income.
 
-
-
+The error plot strongly resembles that of the previous example and induces the same conclusions. 
 
 
 

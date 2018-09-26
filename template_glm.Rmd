@@ -126,7 +126,7 @@ We observe from the summary that in our model we get $R^2 = 0.09$, which indicat
 # Part 3: Multiple linear regression
 
 ## a)
-So far we have implemented the our `mylm`to handle both simple and multivariate linear regression. For implementation details, see Part 1. 
+So far we have implemented the `mylm` package to handle both simple and multivariate linear regression. For implementation details, see Part 2. 
 ```{r}
 model3 = mylm(wages ~ education + age, data = SLID)
 ```
@@ -135,9 +135,9 @@ model3 = mylm(wages ~ education + age, data = SLID)
 ```{r}
 summary(model3)
 ```
-In our model we get the coefficient values $\hat{\beta_0} = -6.02$, $\hat{\beta}_{edu} = 0.902$, $\hat{\beta}_{age} = 0.257$ with the corresponding estimated standard errors $\widehat{SE}(\beta_0) = 0.619$, $\widehat{SE}(\beta_{edu}) = 0.036$ and $\widehat{SE}(\beta_{age}) = 0.257$. This gives us test statistics $z_0 = -9.73$, $z_1 = 25.2$ and $z_2 = 28.7$, which are all highly significant under model assumptions. We get a $\chi^2$-statistic of $661$ on $2$ degrees of freedom, which is indicates that the total regression is also highly significant. 
+In our model we get the coefficient values $\hat{\beta_0} = -6.02$, $\hat{\beta}_{edu} = 0.902$, $\hat{\beta}_{age} = 0.257$ with the corresponding estimated standard errors $\widehat{SE}(\beta_0) = 0.619$, $\widehat{SE}(\beta_{edu}) = 0.036$ and $\widehat{SE}(\beta_{age}) = 0.009$. This gives us test statistics $z_0 = -9.73$, $z_1 = 25.2$ and $z_2 = 28.7$, with all p-values $<2\cdot 10^{-16}$, meaning that all are highly significant under our model assumptions. We get a $\chi^2$-statistic of $661$ on $2$ degrees of freedom and a p-value of $<2 \cdot 10^{-16}$, which indicates that the total regression is also highly significant. 
 
-The coefficients can be interpreted as following: increasing only `education` by one unit will increase the model response $\hat{Y}$ by $0.902$ units. Increasing only `age` by one unit will increase the model response $\hat{Y}$ by $0.257$ units. The `(Intercept)` is the mean of the responses, and is the model response in the case that `education` $ = 0$ and `age` $=0$. If our model assumptions are correct and our data is a sufficiently good representation of the remaining population we would also, on average, expect the same effects of the covariates on the real response $Y$, `wages`.
+The coefficients can be interpreted as following: increasing only `education` by one unit will increase the model response $\hat{Y}$ by $0.902$ units. Increasing only `age` by one unit will increase the model response $\hat{Y}$ by $0.257$ units. The `(Intercept)` is the expected mean value of the response, when `education` $=0$ and `age` $=0$. If our model assumptions are correct and our data is a sufficiently good representation of the remaining population we would also, on average, expect the same effects of the covariates on the real response $Y$, `wages`.
 
 ## c)
 ```{r}
@@ -147,12 +147,12 @@ summary(model30)
 summary(model31)
 ```
 
-The parameter estimates for the simple and multiple regression differ if the covariates are correlated. Then, in the case of the simple regression, the single explanatory variable pick up some of the variance that would otherwise be explained by the additional explanatory variable. The $(p, p)$ matrix $(X^T X)$ is
+The parameter estimates for the simple and multiple regression differ if the covariates are correlated (not orthogonal). Then, in the case of the simple regression, the single explanatory variable pick up some of the variance that would otherwise be explained by the additional explanatory variable. The $(p, p)$ matrix $(X^T X)$ is
 $$ \begin{pmatrix} x_0^T x_0 & x_0^T x_1 & x_0^T x_2 \\
 x_1^T x_0 & x_1^T x_1 & x_1^T x_2 \\
 x_2^T x_0 & x_2^T x_1 & x_2^T x_2 \\ 
 \end{pmatrix},$$
-If we have uncorrelated covariates, we get that $x_i^T x_j = 0 \quad \forall i \neq j$, such that $(X^T X)$ becomes
+If we have uncorrelated (orthogonal) covariates, we get that $x_i^T x_j = 0 \quad \forall i \neq j$, such that $(X^T X)$ becomes
 $$ \begin{pmatrix} x_0^T x_0 & 0 & 0 \\
 0 & x_1^T x_1 & 0 \\
 0 & 0 & x_2^T x_2 \\ 

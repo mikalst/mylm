@@ -1,5 +1,5 @@
 --- 
-title: 'TMA4315: Compulsory exercise 1 (title)'
+title: 'TMA4315: Compulsory exercise 1 Linear models for Gaussian data'
 output:
   pdf_document:
     toc: yes
@@ -9,7 +9,7 @@ output:
     toc_depth: 2
     toc_float: yes
 date: "`r format(Sys.time(), '%d.%m.%Y')`"
-subtitle: 'Group 0: Henrik Syversveen Lie, Mikal Stapnes'
+subtitle: 'Group 0: Henrik Syversveen Lie, Mikal Stapnes, Oliver Byhring'
 ---
 
 ```{r setup, include = FALSE}
@@ -22,7 +22,7 @@ opts_chunk$set(tidy.opts = list(width.cutoff = 68), tidy = TRUE, warning = FALSE
 
 # Part 1: Explanatory analysis of the dataset
 
-## a)
+The following is a matrix of diagnostic plots of all the variables in the dataset from the `car` library.
 
 ```{r, eval=T, echo=FALSE}
 installed.packages("car")
@@ -33,12 +33,12 @@ SLID = SLID[complete.cases(SLID), ]
 ggpairs(SLID)
 ```
 
-`Wage` has a positive correlation with the quantitative variables `education` and `age`. In addition we see that `sex`="Male" has a positive effect on `Wage`. Increasing `education`, `age` or switching `sex` to "Male" will, on average, result in an increase in `Wage` in our dataset. 
+From the diagnostic plots, we see that `Wage` has a positive correlation with the quantitative variables `education` and `age`. In addition we see that `sex`="Male" has a positive effect on `Wage`. Increasing `education`, `age` or switching `sex` to "Male" will, on average, result in an increase in `Wage` in our dataset. 
 
 If we want to perform a MLR analysis, several assumptions need to be made. We assume a linear relationship between the response `Wage` and the covariates
 
-$$ y_i = \beta_0 + \beta_1 x_{i1} + ... + \beta_k x_{ik} + \epsilon_i $$
-The errors $\epsilon_i$ are assumed to be independent, identically distributed with mean $0$ and constant variance $\sigma^2$. If we wish to construct confidence intervals and compute test statistics we must also assume normality in the errors $\epsilon_i \sim N(0, \sigma^2)$
+$$ y_i = \beta_0 + \beta_1 x_{i1} + ... + \beta_k x_{ik} + \epsilon_i.$$
+The errors $\epsilon_i$ are assumed to be independent, identically distributed with mean $0$ and constant variance $\sigma^2$. If we wish to construct confidence intervals and compute test statistics we must also assume normality in the errors $\epsilon_i \sim N(0, \sigma^2)$.
 
 # Part 2: Simple linear regression with the `mylm` package
 
@@ -46,7 +46,7 @@ The errors $\epsilon_i$ are assumed to be independent, identically distributed w
 
 We develop our `mylm` to estimate the coefficients using the least squares estimator
 $$ \hat{\beta} = (X^T X)^{-1} X^T Y.$$
-We confirm that this results in the same coefficient estimates as the included `lm` function,
+We confirm that this results in the same coefficient estimates as the included `lm` function.
 ```{r}
 library(mylm)
 model1 = mylm(wages ~ education, data=SLID)
@@ -56,19 +56,19 @@ model2 = lm(wages ~education, data=SLID)
 print(model2)
 ```
 
-We note that in the case of MLR, the maximum likelihood estimator is the same as the least squares estimator. 
+We also note that in the case of MLR, the maximum likelihood estimator is the same as the least squares estimator. 
 
 ## b)
 
-As $\hat{\beta} = (X^T X)^{-1} X^T Y$ is a linear transformation of $Y$ and it is assumed that $\text{Cov}(Y) = \sigma^2 I$, 
-$$\text{Cov}(\hat{\beta}) = (X^T X)^{-1} X^T \text{Cov}(Y) X (X^T X)^{-1} = (X^T X)^{-1} \sigma^2$$
+As $\hat{\beta} = (X^T X)^{-1} X^T Y$ is a linear transformation of $Y$ and it is assumed that $\text{Cov}(Y) = \sigma^2 I$, we get that
+$$\text{Cov}(\hat{\beta}) = (X^T X)^{-1} X^T \text{Cov}(Y) X (X^T X)^{-1} = (X^T X)^{-1} \sigma^2.$$
 As we have also assumed that $Y \sim N(X \beta, \sigma^2)$, we get that
 $$ \hat{\beta} \sim N(\beta, (X^T X)^{-1} \sigma^2) $$
 
 We can then conduct a hypothesis test with hypotheses
 $$H_0: \beta_j = 0, \quad H_1: \beta_j \neq 0.$$ 
-Which we test using the test statistics
-$$ z_j = \frac{(\beta_j - 0)}{ (c_{jj} \sigma^2)}, \quad c_{jj} = (X^T X)^{-1}_{jj},$$
+We test the hypothesis using the test statistics
+$$ z_j = \frac{(\beta_j - 0)}{ \sqrt{c_{jj}} \sigma}, \quad c_{jj} = (X^T X)^{-1}_{jj},$$
 and the corresponding p-values 
 $$ p_j = 2 \Pr(Z \geq  | z_j |) $$
 Note that we in `mylm` assume asymptotic results ($n - p$ very large), which gives
@@ -80,9 +80,9 @@ $$ z_j \sim T_{n-p}$$
 summary(model1)
 ```
 
-In our model we get the coefficient values $\hat{\beta_0} = 4.97$ and $\hat{\beta_1} = 0.79$ with the corresponding estimated standard errors $\widehat{SE}(\beta_0) = 0.53$ and $\widehat{SE}(\beta_1) = 0.039$. This gives us test statistics $z_0 = 9.30$ and $z_1 = 20.28$, which are both highly significant under model assumptions.
+In our model we get the coefficient values $\hat{\beta_0} = 4.97$ and $\hat{\beta_1} = 0.79$ with the corresponding estimated standard errors $\widehat{SE}(\beta_0) = 0.53$ and $\widehat{SE}(\beta_1) = 0.039$. This gives us test statistics $z_0 = 9.30$ and $z_1 = 20.28$, which are both highly significant under our model assumptions.
 
-The coefficients can be interpreted as following: increasing `education` by one unit will increase the model response $\hat{Y}$ by $0.79$ units. The `(Intercept)` is the mean of the responses, and is the model response in the case that `education = 0`. If our model assumptions are correct and our data is a sufficiently good representation of the remaining population we would also, on average, expect the same effects of the covariates on the real response $Y$, `wages`.
+The coefficients can be interpreted as following: increasing `education` by one unit will increase the model response $\hat{Y}$ by $0.79$ units. The `(Intercept)` is the expected mean value of the response, when `education = 0`. If our model assumptions are correct and our data is a sufficiently good representation of the remaining population we would also, on average, expect the same effects of the covariates on the real response $Y$, `wages`.
 
 ## c)
 
@@ -94,22 +94,24 @@ From the plot we see that for lower values the residuals are mostly positive, wh
 
 ## d)
 
-The residual sum of squares `SSE` is the sum of squares  $\sum^n_{i=1} (y_i - \hat{y}_i)^2$. The degrees of freedom for this model is the number of observations minus the number of fitted parameters, $n - p$. The total sum of squares `SST` is similarly defined as $\sum^n_{i=1} (y_i - \bar{y})^2$. The regression sum of squares is the difference $SST - SSE$. Under $H_0$ we have that
+The residual sum of squares `SSE` is the sum of squares  $\sum^n_{i=1} (y_i - \hat{y}_i)^2$. The degrees of freedom for this model is the number of observations minus the number of fitted parameters, $n - p$. The total sum of squares `SST` is similarly defined as $\sum^n_{i=1} (y_i - \bar{y})^2$. The regression sum of squares is the difference $SST - SSE$. Under $H_0$ from b) we have that
 $$\frac{(SST - SSE) / (p-1)}{SSE / (n - p)} \sim F_{p-1, n-p}.$$
 Again we assume asymptotic results, i.e. that $(n - p) \rightarrow \infty$, and get 
 $$\frac{(SST - SSE)}{SSE / (n-p)} \sim \chi^2_{p-1}.$$
 Which we can use to test the significance of the total regression. 
-```{r}
+```{r, echo = F, eval = T}
 cat("Chi-square test statistic: ", model1$F_statistic, "\n")
 cat("p-val: ", model1$F_p_val)
 ```
+Because the p-value is below any reasonable significance level, we say that the regression is significant.
+
 In simple linear regression, $p = 2$ and the $z$-test and $\chi^2$-test become equivalent tests of the same $H_0$. This comes as a result of the definition of a $\chi^2$ variable, which is that if $Z_1, Z_2, \dots, Z_k \sim N(0, 1)$, we have that the sum of their squares, 
 $$ Q = \sum_{i=1}^{k}Z_i^2,$$
 is distributed according to the $\chi^2$ distribution with $k$ degrees of freedom, denoted as $Q \sim \chi^2_k$. Seeing as the $z$-statistic is standard normal distributed, its square $z^2$ will be $\chi^2$ distributed with $1$ degree or freedom, $z^2 \sim \chi^2_1$. This means that the $z$- and $\chi^2$ statistics will reject the null hypothesis at the same levels of significance.
 
 We confirm this by listing the critical $Z$-values of some some quantiles along with square of the $\chi^2$-values for the same quantiles. Note that the normal distributed quantiles are two-sided wheres the $\chi^2$ quantiles are one-sided. 
 ```{r}
-interval = c(0.70, 0.85, 0.90, 0.95)
+interval = c(0.70, 0.8, 0.90, 0.95)
 interval2 = c(0.40, 0.60, 0.80, 0.90)
 cat(abs(qnorm(interval)), "\n")
 cat(sqrt(qchisq(interval2, 1)))

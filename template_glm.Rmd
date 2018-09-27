@@ -94,10 +94,10 @@ From the plot we see that for lower values the residuals are mostly positive, wh
 
 ## d)
 
-The residual sum of squares `SSE` is the sum of squares  $\sum^n_{i=1} (y_i - \hat{y}_i)^2$. The degrees of freedom for this model is the number of observations minus the number of fitted parameters, $n - p$. The total sum of squares `SST` is similarly defined as $\sum^n_{i=1} (y_i - \bar{y})^2$. The regression sum of squares is the difference $SST - SSE$. Under $H_0$ from b) we have that
+The residual sum of squares `SSE` is the sum of squares  $\sum^n_{i=1} (y_i - \hat{y}_i)^2$. The degrees of freedom for the `SSE` for this model is the number of observations minus the number of fitted parameters, $n - p$. The total sum of squares `SST` is similarly defined as $\sum^n_{i=1} (y_i - \bar{y})^2$. The regression sum of squares is the difference $SST - SSE$, with $p-1$ degrees of freedom. Under $H_0$ from b) we have that
 $$\frac{(SST - SSE) / (p-1)}{SSE / (n - p)} \sim F_{p-1, n-p}.$$
 Again we assume asymptotic results, i.e. that $(n - p) \rightarrow \infty$, and get 
-$$\frac{(SST - SSE)}{SSE / (n-p)} \sim \chi^2_{p-1}.$$
+$$(p-1)\frac{(SST - SSE)/(p-1)}{SSE / (n-p)} \sim \chi^2_{p-1}.$$
 Which we can use to test the significance of the total regression. 
 ```{r, echo = F, eval = T}
 cat("Chi-square test statistic: ", model1$F_statistic, "\n")
@@ -105,11 +105,17 @@ cat("p-val: ", model1$F_p_val)
 ```
 Because the p-value is below any reasonable significance level, we say that the regression is significant.
 
-In simple linear regression, $p = 2$ and the $z$-test and $\chi^2$-test become equivalent tests of the same $H_0$. This comes as a result of the definition of a $\chi^2$ variable, which is that if $Z_1, Z_2, \dots, Z_k \sim N(0, 1)$, we have that the sum of their squares, 
+In simple linear regression, we have $p = 2$. The definition of a $\chi^2$ variable is that if $Z_1, Z_2, \dots, Z_k \sim N(0, 1)$, we have that the sum of their squares, 
 $$ Q = \sum_{i=1}^{k}Z_i^2,$$
-is distributed according to the $\chi^2$ distribution with $k$ degrees of freedom, denoted as $Q \sim \chi^2_k$. Seeing as the $z$-statistic is standard normal distributed, its square $z^2$ will be $\chi^2$ distributed with $1$ degree or freedom, $z^2 \sim \chi^2_1$. This means that the $z$- and $\chi^2$ statistics will reject the null hypothesis at the same levels of significance.
+is distributed according to the $\chi^2$ distribution with $k$ degrees of freedom, denoted as $Q \sim \chi^2_k$. Seeing as the $z$-statistic is standard normal distributed, its square $z^2$ will be $\chi^2$ distributed with $1$ degree or freedom, $z^2 \sim \chi^2_1$. But the $\chi^2$-test statistic will also have $p-1 = 2-1 = 1$ degree of freedom. So the square of the z-test statistic and the $\chi^2$-test statistic will have the same distribution. This means that the square of the $z$-statistic and the $\chi^2$ statistics will reject the null hypothesis at the same critical value.
 
-We confirm this by listing the critical $Z$-values of some some quantiles along with square of the $\chi^2$-values for the same quantiles. Note that the normal distributed quantiles are two-sided wheres the $\chi^2$ quantiles are one-sided. 
+We first confirm that the square of our $z_1$-statistic is equal to the $\chi^2$-statistic:
+```{r}
+cat(model1$coeff_z[2]^2, "\n")
+cat(model1$F_statistic)
+```
+
+We then confirm that the critical values coincide by listing the critical $Z$-values of some some quantiles along with the square root of the $\chi^2$-values for the same quantiles. Note that the normal distributed quantiles are two-sided wheres the $\chi^2$ quantiles are one-sided. 
 ```{r}
 interval = c(0.70, 0.8, 0.90, 0.95)
 interval2 = c(0.40, 0.60, 0.80, 0.90)
@@ -173,15 +179,15 @@ summary(model40)
 plot(model40)
 ```
 
-The difference between this model and earlier MLR is that we are now a squared term, $'education'^2$. Our linear model assumption is now,
+The difference between this model and earlier MLR is that we are now adding a squared term, `education`$^2$. Our linear model assumption is now
 $$ Y_i = \beta_0 + \beta_{sex} x_{i, sex} + \beta_{age} x_{i, age} + \beta_{lan} x_{i, lan} + \beta_{edu^2} x_{i, edu}^2 + \epsilon_i.$$
 Fitting our model, we see positive terms for the covariates `sex`, `age` and `education$^2$` and negative for both levels of `language`. 
 
-The coefficient $\hat{\beta}_{edu^2}$ can be interpreted as the following: increasing the square of `education` by one unit will increase the model response, $\hat{Y}$, by $0.035$ units. We also notet that covariates that are fitted to a negative coefficient will produce a decrease in the model response $\hat{Y}$. All remaining coefficients can be interpreted as in 3b. 
+The coefficient $\hat{\beta}_{edu^2}$ can be interpreted as the following: increasing the square of `education` by one unit will increase the model response, $\hat{Y}$, by $0.035$ units. We also note that covariates that are fitted to a negative coefficient will produce a decrease in the model response $\hat{Y}$. All remaining coefficients can be interpreted as in 3b). 
 
-We notice that all variables attain a high level of significance with the exception of language. Thus, to improve the model, language should be removed, as even under model assumptions it is probable that it is uncorrelated with the response. The $\chi^2$-statistic of $345$ on $5$ degrees of freedom indicates that the total regression is highly significant. 
+We notice that all variables attain a high level of significance with the exception of language. Thus, to improve the model, language should be removed, as even under model assumptions it is probable that it is uncorrelated with the response. The $\chi^2$-statistic of $345$ on $5$ degrees of freedom with p-value $<2 \cdot 10^{-16}$ indicates that the total regression is highly significant. 
 
-The error plot shows a lower bound of the residuals in the left corner. Again the explanation is that we cannot have negative `wages`. Beyond this, we observe some level of homoscedasticity and normality in our errors, which indicates that our model assumptions are not entirely reasonable. 
+The error plot shows a lower bound of the residuals in the left corner. Again the explanation is that we cannot have negative `wages`. Beyond this, we observe only some level of homoscedasticity and normality in our errors, which indicates that our model assumptions are not entirely reasonable. 
 
 ```{r}
 model41 = mylm(wages ~ language + education + language*education, data=SLID)
@@ -192,10 +198,10 @@ plot(model41)
 Now we have included an interaction term. Our linear model assumption is now,
 
 $$ Y_i = \beta_0 + \beta_{edu} x_{i, edu} + \beta_{lan} x_{i, lan} + \beta_{edu \& lan} x_{i, edu} x_{i, lan} + \epsilon_i.$$
-We interpret the interaction term between `language` and `education` in the following way. When the level of language increases from 0 to 1 (from `English` to `French`), the response is incresed by the coefficient estimate for `French` plus an interaction term, which is the coefficient estimate for the interaction multiplied by the `education` covariate,
+We interpret the interaction term between `language` and `education` in the following way. When the level of language increases from 0 to 1 (from `English` to `French`), the response is increased by the coefficient estimate for `French` plus an interaction term, which is the coefficient estimate for the interaction multiplied by the `education` covariate,
 $$Y_{increase} = \beta_{languageFrench} + \beta_{edu\&lan} x_{edu}.$$
 
-A $\chi^2$-statistic with a corresponding p-value $<2.2 \times 10^{-16}$ signifies that the total regression is significant. The intercept, `languageOther` and `education` are all significant on a $0.001$ level. The interaction between `languageOther`and `education` is significant on a $0.01$ level, `languageFrench` on a $0.05$ level and the interaction between `languageFrench` and `education` on a $0.1$ level. 
+A $\chi^2$-statistic with a corresponding p-value $<2 \cdot 10^{-16}$ signifies that the total regression is significant. The intercept, `languageOther` and `education` are all significant on a $0.001$ level. The interaction between `languageOther`and `education` is significant on a $0.01$ level, `languageFrench` on a $0.05$ level and the interaction between `languageFrench` and `education` on a $0.1$ level. 
 
 Seeing as `languageFrench` and `languageOther` have roughly the same coefficient estimate, one could use the natural assumption that they have the same effect and merge these two levels into one, giving `language` only two levels. 
 

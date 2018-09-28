@@ -9,7 +9,7 @@ output:
     toc_depth: 2
     toc_float: yes
 date: "`r format(Sys.time(), '%d.%m.%Y')`"
-subtitle: 'Group 0: Henrik Syversveen Lie, Mikal Stapnes, Oliver Byhring'
+subtitle: 'Group 7: Henrik Syversveen Lie, Mikal Stapnes, Oliver Byhring'
 ---
 
 ```{r setup, include = FALSE}
